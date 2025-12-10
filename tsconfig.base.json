@@ -14,7 +14,20 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@tiketq-be/transactions_domain": [
+        "libs/domain/transactions/src/index.ts"
+      ],
+      "@tiketq-be/flights_domain": ["libs/domain/flights/src/index.ts"],
+      "@tiketq-be/transactions": ["libs/application/transactions/src/index.ts"],
+      "@tiketq-be/flights": ["libs/application/flights/src/index.ts"],
+      "@tiketq-be/database": ["libs/infrastructure/database/src/index.ts"],
+      "@tiketq-be/payment": ["libs/infrastructure/payment/src/index.ts"],
+      "@tiketq-be/flight-vendor": [
+        "libs/infrastructure/flight-vendor/src/index.ts"
+      ],
+      "@tiketq-be/common": ["libs/infrastructure/common/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }

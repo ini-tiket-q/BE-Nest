@@ -1,0 +1,9 @@
+{
+  "name": "flight-vendor",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/infrastructure/flight-vendor/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project flight-vendor --web",
+  "targets": {}
+}
