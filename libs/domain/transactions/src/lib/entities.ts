@@ -1,17 +1,9 @@
-/**
- * Transaction Status Enum
- * Represents the possible states of a transaction
- */
 export enum TransactionStatus {
     PENDING = 'PENDING',
     PAID = 'PAID',
     FAILED = 'FAILED',
 }
 
-/**
- * Customer Information Value Object
- * Contains customer details for a transaction
- */
 export class CustomerInfo {
     constructor(
         public readonly name: string,
@@ -21,19 +13,15 @@ export class CustomerInfo {
 
     static create(name: string, email: string, phone?: string): CustomerInfo {
         if (!name || name.trim().length === 0) {
-        throw new Error('Customer name is required');
+            throw new Error('Customer name is required');
         }
         if (!email || !email.includes('@')) {
-        throw new Error('Valid customer email is required');
+            throw new Error('Valid customer email is required');
         }
         return new CustomerInfo(name.trim(), email.trim(), phone?.trim());
     }
 }
 
-/**
- * Transaction Entity
- * Core domain model representing a payment transaction
- */
 export class Transaction {
     constructor(
         public readonly id: string,
@@ -45,9 +33,6 @@ export class Transaction {
         public readonly updatedAt: Date
     ) {}
 
-    /**
-     * Factory method to create a new transaction
-     */
     static create(
         id: string,
         amount: number,
@@ -55,10 +40,10 @@ export class Transaction {
         customerInfo: CustomerInfo
     ): Transaction {
         if (amount <= 0) {
-        throw new Error('Transaction amount must be positive');
+            throw new Error('Transaction amount must be positive');
         }
         if (!bookingId || bookingId.trim().length === 0) {
-        throw new Error('Booking ID is required');
+            throw new Error('Booking ID is required');
         }
 
         const now = new Date();
@@ -73,61 +58,46 @@ export class Transaction {
         );
     }
 
-    /**
-     * Mark transaction as paid
-     */
     markAsPaid(): Transaction {
         if (this.status !== TransactionStatus.PENDING) {
-        throw new Error('Only pending transactions can be marked as paid');
+            throw new Error('Only pending transactions can be marked as paid');
         }
 
         return new Transaction(
-        this.id,
-        this.amount,
-        TransactionStatus.PAID,
-        this.bookingId,
-        this.customerInfo,
-        this.createdAt,
-        new Date()
+            this.id,
+            this.amount,
+            TransactionStatus.PAID,
+            this.bookingId,
+            this.customerInfo,
+            this.createdAt,
+            new Date()
         );
     }
 
-    /**
-     * Mark transaction as failed
-     */
     markAsFailed(): Transaction {
         if (this.status === TransactionStatus.PAID) {
-        throw new Error('Cannot mark paid transactions as failed');
+            throw new Error('Cannot mark paid transactions as failed');
         }
 
         return new Transaction(
-        this.id,
-        this.amount,
-        TransactionStatus.FAILED,
-        this.bookingId,
-        this.customerInfo,
-        this.createdAt,
-        new Date()
+            this.id,
+            this.amount,
+            TransactionStatus.FAILED,
+            this.bookingId,
+            this.customerInfo,
+            this.createdAt,
+            new Date()
         );
     }
 
-    /**
-     * Check if transaction is pending
-     */
     isPending(): boolean {
         return this.status === TransactionStatus.PENDING;
     }
 
-    /**
-     * Check if transaction is paid
-     */
     isPaid(): boolean {
         return this.status === TransactionStatus.PAID;
     }
 
-    /**
-     * Check if transaction is failed
-     */
     isFailed(): boolean {
         return this.status === TransactionStatus.FAILED;
     }
