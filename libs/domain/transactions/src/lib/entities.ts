@@ -13,10 +13,10 @@ export class CustomerInfo {
 
     static create(name: string, email: string, phone?: string): CustomerInfo {
         if (!name || name.trim().length === 0) {
-        throw new Error('Customer name is required');
+            throw new Error('Customer name is required');
         }
         if (!email || !email.includes('@')) {
-        throw new Error('Valid customer email is required');
+            throw new Error('Valid customer email is required');
         }
         return new CustomerInfo(name.trim(), email.trim(), phone?.trim());
     }
@@ -40,10 +40,10 @@ export class Transaction {
         customerInfo: CustomerInfo
     ): Transaction {
         if (amount <= 0) {
-        throw new Error('Transaction amount must be positive');
+            throw new Error('Transaction amount must be positive');
         }
         if (!bookingId || bookingId.trim().length === 0) {
-        throw new Error('Booking ID is required');
+            throw new Error('Booking ID is required');
         }
 
         const now = new Date();
@@ -60,33 +60,33 @@ export class Transaction {
 
     markAsPaid(): Transaction {
         if (this.status !== TransactionStatus.PENDING) {
-        throw new Error('Only pending transactions can be marked as paid');
+            throw new Error('Only pending transactions can be marked as paid');
         }
 
         return new Transaction(
-        this.id,
-        this.amount,
-        TransactionStatus.PAID,
-        this.bookingId,
-        this.customerInfo,
-        this.createdAt,
-        new Date()
+            this.id,
+            this.amount,
+            TransactionStatus.PAID,
+            this.bookingId,
+            this.customerInfo,
+            this.createdAt,
+            new Date()
         );
     }
 
     markAsFailed(): Transaction {
         if (this.status === TransactionStatus.PAID) {
-        throw new Error('Cannot mark paid transactions as failed');
+            throw new Error('Cannot mark paid transactions as failed');
         }
 
         return new Transaction(
-        this.id,
-        this.amount,
-        TransactionStatus.FAILED,
-        this.bookingId,
-        this.customerInfo,
-        this.createdAt,
-        new Date()
+            this.id,
+            this.amount,
+            TransactionStatus.FAILED,
+            this.bookingId,
+            this.customerInfo,
+            this.createdAt,
+            new Date()
         );
     }
 
