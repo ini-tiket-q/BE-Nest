@@ -1,5 +1,5 @@
 # Stage 1: Builder
-# This stage builds BOTH applications
+# This stage builds ALL applications
 FROM node:20-alpine AS builder
 
 WORKDIR /app
@@ -15,13 +15,15 @@ RUN npm ci
 # Copy the rest of the monorepo source code
 COPY . .
 
-# Build both applications for production
+# Build all applications for production
 RUN npx nx build transactions-service --configuration=production
 RUN npx nx build flight-service --configuration=production
+RUN npx nx build api-gateway --configuration=production
 
 # ---
 
 # Stage 2: Production Base
+# This stage has the minimal production node_modules
 FROM node:20-alpine as production-base
 
 WORKDIR /app
@@ -36,10 +38,7 @@ COPY .env .
 FROM production-base AS transactions-runner
 WORKDIR /app/service
 COPY --from=builder /app/dist/apps/transactions-service .
-
-
-# transactions-service runs on port 3000
-EXPOSE 3000 
+EXPOSE 3001
 CMD ["node", "main.js"]
 
 
@@ -49,8 +48,15 @@ CMD ["node", "main.js"]
 FROM production-base AS flight-runner
 WORKDIR /app/service
 COPY --from=builder /app/dist/apps/flight-service .
+EXPOSE 3334
+CMD ["node", "main.js"]
 
 
-# flight-service runs on port 3334
-EXPOSE 3334 
+# ---
+
+# Stage 5: API Gateway Runner
+FROM production-base AS api-gateway-runner
+WORKDIR /app/service
+COPY --from=builder /app/dist/apps/api-gateway .
+EXPOSE 3000
 CMD ["node", "main.js"]

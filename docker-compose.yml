@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   postgres:
@@ -8,53 +8,68 @@ services:
       POSTGRES_PASSWORD: tiketq123
       POSTGRES_DB: tiketq_db
     ports:
-      - '5432:5432'
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
   redis:
     image: redis:7-alpine
     ports:
-      - '6379:6379'
+      - "6379:6379"
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - api-gateway
 
   jaeger:
     image: jaegertracing/all-in-one:latest
     ports:
-      - '16686:16686'
-      - '14268:14268'
+      - "16686:16686"
+      - "14268:14268"
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: api-gateway-runner
+    depends_on:
+      - transactions-service
+      - flight-service
+    environment:
+      NODE_ENV: production
+      PORT: 3000
 
   transactions-service:
     build:
       context: .
       dockerfile: Dockerfile
-      target: transactions-runner # <-- Tells Docker to build the 'transactions-runner' stage
-    ports:
-      - '3000:3000' # <-- Maps the port for the transactions service
+      target: transactions-runner
     depends_on:
       - postgres
       - redis
     environment:
-      # Add environment variables needed by this service
-      # For example:
       DATABASE_HOST: postgres
       NODE_ENV: production
-      PORT: 3000 # Explicitly set port for consistency
+      PORT: 3001
 
   flight-service:
     build:
       context: .
       dockerfile: Dockerfile
-      target: flight-runner # <-- Tells Docker to build the 'flight-runner' stage
-    ports:
-      - '3334:3334' # <-- Maps the port for the flight service
+      target: flight-runner
     depends_on:
       - postgres
       - redis
     environment:
-      # Add environment variables needed by this service
-      DATABASE_HOST: postgres # Assuming flight-service also uses postgres
+      DATABASE_HOST: postgres
       NODE_ENV: production
-      PORT: 3334 # Explicitly set port for consistency
+      PORT: 3334
 
 volumes:
   postgres_data:
