@@ -23,5 +23,38 @@ services:
       - '16686:16686'
       - '14268:14268'
 
+  transactions-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: transactions-runner # <-- Tells Docker to build the 'transactions-runner' stage
+    ports:
+      - '3000:3000' # <-- Maps the port for the transactions service
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      # Add environment variables needed by this service
+      # For example:
+      DATABASE_HOST: postgres
+      NODE_ENV: production
+      PORT: 3000 # Explicitly set port for consistency
+
+  flight-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: flight-runner # <-- Tells Docker to build the 'flight-runner' stage
+    ports:
+      - '3334:3334' # <-- Maps the port for the flight service
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      # Add environment variables needed by this service
+      DATABASE_HOST: postgres # Assuming flight-service also uses postgres
+      NODE_ENV: production
+      PORT: 3334 # Explicitly set port for consistency
+
 volumes:
   postgres_data:
