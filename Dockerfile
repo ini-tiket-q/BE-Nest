@@ -48,7 +48,7 @@ CMD ["node", "main.js"]
 FROM production-base AS flight-runner
 WORKDIR /app/service
 COPY --from=builder /app/dist/apps/flight-service .
-EXPOSE 3334
+EXPOSE 3002
 CMD ["node", "main.js"]
 
 
