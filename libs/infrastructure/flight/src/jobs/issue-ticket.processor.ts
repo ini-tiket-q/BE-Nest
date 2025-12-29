@@ -2,7 +2,7 @@ import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { Job } from 'bullmq';
 
 @Processor('flight-issuance')
-export class IssueticketProcessor extends WorkerHost {
+export class IssueTicketProcessor extends WorkerHost {
     async process(job: Job<{ bookingId: string}>): Promise<void> {
         const {bookingId} = job.data;
 
