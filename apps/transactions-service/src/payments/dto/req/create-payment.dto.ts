@@ -2,8 +2,7 @@ import { IsNumber, IsString } from "class-validator"
 
 export class CreatePaymentDto {
     @IsString()
-    @IsNumber()
-    order_id: string | number
+    order_id: string
     @IsNumber()
     gross_amount: number
 }
