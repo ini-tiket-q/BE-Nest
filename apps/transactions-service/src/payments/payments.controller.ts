@@ -12,7 +12,7 @@ export class PaymentsController {
   // }
 
   @Get('create-transaction')
-  async transaction(@Body() order: CreatePaymentDto): Promise<string | number> {
+  async transaction(@Body() order: CreatePaymentDto): Promise<{ token: string, redirect_url: string }> {
     const transaction = await this.paymentsService.createTransaction(order)
     return transaction;
   }
