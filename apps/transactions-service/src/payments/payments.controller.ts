@@ -5,30 +5,9 @@ import { CreatePaymentDto } from './dto/req/create-payment.dto';
 @Controller('payments')
 export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
-
-  // @Post()
-  // create(@Body() createPaymentDto: CreatePaymentDto) {
-  //   return this.paymentsService.create(createPaymentDto);
-  // }
-
   @Get('create-transaction')
   async transaction(@Body() order: CreatePaymentDto): Promise<{ token: string, redirect_url: string }> {
     const transaction = await this.paymentsService.createTransaction(order)
     return transaction;
   }
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.paymentsService.findOne(+id);
-  // }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updatePaymentDto: UpdatePaymentDto) {
-  //   return this.paymentsService.update(+id, updatePaymentDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.paymentsService.remove(+id);
-  // }
 }
