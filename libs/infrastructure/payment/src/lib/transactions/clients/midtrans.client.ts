@@ -1,42 +1,24 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
-
-const midtransClient = require('midtrans-client');
-interface TransactionDetailItf {
-    transaction_details: {
-        order_id: string;
-        gross_amount: number;
-    }
-}
-interface SnapItf {
-    createTransaction(parameter: TransactionDetailItf): Promise<{ token: string, redirect_url: string }>;
-}
-
 @Injectable()
 export class MidtransClient {
-    private readonly snap: SnapItf
+    private readonly serverKey = process.env['SERVER_KEY'];
     constructor() {
-        const serverKey = process.env['SERVER_KEY'];
-        const clientKey = process.env['CLIENT_KEY'];
-        if (!serverKey) throw new BadRequestException('SERVER_CLIENT is undefined');
-        if (!clientKey) throw new BadRequestException('CLIENT_KEY is undefined');
-
-        this.snap = new midtransClient.Snap({
-            isProduction : false,
-            serverKey : serverKey,
-            clientKey : clientKey
-        })
+        if (!this.serverKey) throw new BadRequestException('SERVER_CLIENT is undefined');
     }
 
-    async generateSnapUrl(params: {orderId: string, grossAmount: number}): Promise<string> {
-        const {orderId, grossAmount} = params
-        let parameter: TransactionDetailItf = {
-            transaction_details: {
-                order_id: orderId,
-                gross_amount: grossAmount
-            }
-        };
-        const transaction: { token: string, redirect_url: string } = await this.snap.createTransaction(parameter)
-        const redirectUrl: string = transaction.redirect_url
-        return redirectUrl
+    async reqMidtrans<T, U>(path: string, params: U): Promise<T> {
+        const encodedServerKey = Buffer.from(`${this.serverKey}:`, 'utf8').toString('base64')
+        const response = await fetch(path, {
+            method: "POST",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                Authorization: `Basic ${encodedServerKey}`
+            },
+            body: JSON.stringify(params)
+        });
+        if(!response.ok) throw new BadRequestException(`Midtrans error: ${response.status}`);
+        const data: T = await response.json()
+        return data
     }
 }
