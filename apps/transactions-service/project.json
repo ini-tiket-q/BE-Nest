@@ -1,58 +1,38 @@
 {
   "name": "transactions-service",
   "$schema": "../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "transactions-service/src",
+  "sourceRoot": "apps/transactions-service/src",
   "projectType": "application",
   "tags": [],
   "targets": {
     "build": {
-      "executor": "nx:run-commands",
+      "executor": "@nx/webpack:webpack",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "defaultConfiguration": "production",
       "options": {
-        "command": "webpack-cli build",
-        "args": ["--node-env=production"],
-        "cwd": "transactions-service"
+        "target": "node",
+        "compiler": "tsc",
+        "outputPath": "dist/apps/transactions-service",
+        "main": "apps/transactions-service/src/main.ts",
+        "tsConfig": "apps/transactions-service/tsconfig.app.json",
+        "assets": [
+          "apps/transactions-service/src/assets"
+        ],
+        "webpackConfig": "apps/transactions-service/webpack.config.js"
       },
       "configurations": {
-        "development": {
-          "args": ["--node-env=development"]
-        }
+        "development": {},
+        "production": {}
       }
-    },
-    "prune-lockfile": {
-      "dependsOn": ["build"],
-      "cache": true,
-      "executor": "@nx/js:prune-lockfile",
-      "outputs": [
-        "{workspaceRoot}/dist/transactions-service/package.json",
-        "{workspaceRoot}/dist/transactions-service/package-lock.json"
-      ],
-      "options": {
-        "buildTarget": "build"
-      }
-    },
-    "copy-workspace-modules": {
-      "dependsOn": ["build"],
-      "cache": true,
-      "outputs": [
-        "{workspaceRoot}/dist/transactions-service/workspace_modules"
-      ],
-      "executor": "@nx/js:copy-workspace-modules",
-      "options": {
-        "buildTarget": "build"
-      }
-    },
-    "prune": {
-      "dependsOn": ["prune-lockfile", "copy-workspace-modules"],
-      "executor": "nx:noop"
     },
     "serve": {
-      "continuous": true,
       "executor": "@nx/js:node",
       "defaultConfiguration": "development",
-      "dependsOn": ["build"],
       "options": {
         "buildTarget": "transactions-service:build",
-        "runBuildTargetDependencies": false
+        "watch": false
       },
       "configurations": {
         "development": {
