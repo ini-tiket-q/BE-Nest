@@ -26,6 +26,7 @@ export class Transaction {
     constructor(
         public readonly id: string,
         public readonly amount: number,
+        public readonly currency: string,
         public readonly status: TransactionStatus,
         public readonly bookingId: string,
         public readonly customerInfo: CustomerInfo,
@@ -36,6 +37,7 @@ export class Transaction {
     static create(
         id: string,
         amount: number,
+        currency: string,
         bookingId: string,
         customerInfo: CustomerInfo
     ): Transaction {
@@ -45,11 +47,15 @@ export class Transaction {
         if (!bookingId || bookingId.trim().length === 0) {
             throw new Error('Booking ID is required');
         }
+        if (!currency || currency.trim().length === 0) {
+            throw new Error('Currency is required');
+        }
 
         const now = new Date();
         return new Transaction(
             id,
             amount,
+            currency.toUpperCase().trim(),
             TransactionStatus.PENDING,
             bookingId.trim(),
             customerInfo,
@@ -66,6 +72,7 @@ export class Transaction {
         return new Transaction(
             this.id,
             this.amount,
+            this.currency,
             TransactionStatus.PAID,
             this.bookingId,
             this.customerInfo,
@@ -82,6 +89,7 @@ export class Transaction {
         return new Transaction(
             this.id,
             this.amount,
+            this.currency,
             TransactionStatus.FAILED,
             this.bookingId,
             this.customerInfo,
