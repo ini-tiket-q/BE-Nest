@@ -15,7 +15,7 @@ export class CreateTransactionResponseDto {
     @ApiProperty({
         description: 'Current status of the transaction',
         enum: TransactionStatus,
-        example: TransactionStatus.PENDING,
+        example: TransactionStatus.CREATED,
     })
     status!: TransactionStatus;
 

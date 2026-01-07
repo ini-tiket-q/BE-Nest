@@ -73,7 +73,7 @@ export class TransactionsController {
         // Mock response for API contract demonstration
         const response = new CreateTransactionResponseDto();
         response.transactionId = '550e8400-e29b-41d4-a716-446655440099';
-        response.status = TransactionStatus.PENDING;
+        response.status = TransactionStatus.CREATED;
         response.amount = createTransactionDto.amount;
         response.currency = createTransactionDto.currency;
         response.createdAt = new Date().toISOString();

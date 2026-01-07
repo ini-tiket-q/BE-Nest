@@ -1,4 +1,5 @@
 export enum TransactionStatus {
+    CREATED = 'CREATED',
     PENDING = 'PENDING',
     PAID = 'PAID',
     FAILED = 'FAILED',
@@ -56,11 +57,28 @@ export class Transaction {
             id,
             amount,
             currency.toUpperCase().trim(),
-            TransactionStatus.PENDING,
+            TransactionStatus.CREATED,
             bookingId.trim(),
             customerInfo,
             now,
             now
+        );
+    }
+
+    initiatePayment(): Transaction {
+        if (this.status !== TransactionStatus.CREATED) {
+            throw new Error('Only created transactions can be initiated for payment');
+        }
+
+        return new Transaction(
+            this.id,
+            this.amount,
+            this.currency,
+            TransactionStatus.PENDING,
+            this.bookingId,
+            this.customerInfo,
+            this.createdAt,
+            new Date()
         );
     }
 
@@ -100,6 +118,10 @@ export class Transaction {
 
     isPending(): boolean {
         return this.status === TransactionStatus.PENDING;
+    }
+
+    isCreated(): boolean {
+        return this.status === TransactionStatus.CREATED;
     }
 
     isPaid(): boolean {
