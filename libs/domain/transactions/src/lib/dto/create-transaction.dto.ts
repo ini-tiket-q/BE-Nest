@@ -1,8 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
     IsArray,
+    IsEmail,
     IsNotEmpty,
     IsNumber,
+    IsOptional,
     IsPositive,
     IsString,
     IsUUID,
@@ -52,4 +54,32 @@ export class CreateTransactionDto {
     @IsString()
     @IsNotEmpty()
     currency!: string;
+
+    @ApiProperty({
+        description: 'Customer full name (required for guest checkout, optional if authenticated)',
+        example: 'John Doe',
+        required: false,
+    })
+    @IsOptional()
+    @IsString()
+    @IsNotEmpty()
+    customerName?: string;
+
+    @ApiProperty({
+        description: 'Customer email address (required for guest checkout, optional if authenticated)',
+        example: 'john.doe@example.com',
+        required: false,
+    })
+    @IsOptional()
+    @IsEmail()
+    customerEmail?: string;
+
+    @ApiProperty({
+        description: 'Customer phone number (optional)',
+        example: '+6281234567890',
+        required: false,
+    })
+    @IsOptional()
+    @IsString()
+    customerPhone?: string;
 }
