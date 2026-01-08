@@ -3,7 +3,7 @@ import { BadRequestException, Injectable } from "@nestjs/common";
 export class MidtransClient {
     private readonly serverKey = process.env['SERVER_KEY'];
     constructor() {
-        if (!this.serverKey) throw new BadRequestException('SERVER_CLIENT is undefined');
+        if (!this.serverKey) throw new BadRequestException('SERVER_KEY is undefined');
     }
 
     async reqMidtrans<T, U>(path: string, params: U): Promise<T> {
