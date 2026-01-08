@@ -5,7 +5,7 @@ import { CreatePaymentDto } from './dto/req/create-payment.dto';
 @Controller('payments')
 export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
-  @Get('create-transaction')
+  @Post('create-transaction')
   async transaction(@Body() order: CreatePaymentDto): Promise<{ token: string, redirect_url: string }> {
     const transaction = await this.paymentsService.createTransaction(order)
     return transaction;
