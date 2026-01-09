@@ -1,9 +1,8 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 
 @Controller('payments')
 export class PaymentWebhookController {
   @Post('callbacks/midtrans')
-  midtransTransaction(): string {
-    return 'payment ok';
-  }
+  @HttpCode(HttpStatus.OK)
+  midtransTransaction() {}
 }
