@@ -1,15 +1,18 @@
 import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { MidtransSignatureService } from '../security/midtrans-signature.service';
 import { MidtransCallbackDto } from './dto/payment-webhook.dto';
-import { verifySignature } from '../security/midtrans-signature.service';
 
 @Controller('payments')
 export class PaymentWebhookController {
+  constructor(
+    private readonly midtransSignatureService: MidtransSignatureService
+  ) {}
   @Post('callbacks/midtrans')
   @HttpCode(HttpStatus.OK)
-  midtransTransaction(@Body() dto: MidtransCallbackDto) {
+  async midtransTransaction(@Body() dto: MidtransCallbackDto) {
     console.log(`payload:: ${JSON.stringify(dto)}`);
 
-    const isVerified = verifySignature(
+    const isVerified = await this.midtransSignatureService.verifySignature(
       dto.order_id,
       dto.status_code,
       dto.gross_amount,
