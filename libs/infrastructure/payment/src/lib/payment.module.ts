@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
+import { PaymentWebhookController } from '../controllers/payment-webhook.controller';
 
 @Module({
-  controllers: [],
+  controllers: [PaymentWebhookController],
   providers: [],
   exports: [],
 })
