@@ -1,17 +1,101 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable, Logger } from "@nestjs/common";
 import { MidtransGenerateRequestDto } from "../dtos/req/midtrans-generate-request.dto";
-import { IMidtransPaymentPort } from '../../../../domain/src/transaction/ports';
 import { PaymentParams } from "../../../../domain/transactions/models";
-import { MidtransClient } from "../lib/transactions/clients/midtrans.client";
 import { MidtransGenerateResponseDto } from "../dtos/res/midtrans-generate-response.dto";
+import { IMidtransPaymentPort } from "@tiketq-be/transactions_domain";
+import { lastValueFrom, catchError, throwError, timeout, retry, timer } from 'rxjs';
+import { HttpService } from "@nestjs/axios";
+import { HttpResilienceConfig } from "../config/http-resilience.config";
+import { AxiosError } from "axios";
+import { MidtransErrorResponse, MidtransHttpError } from "../exception/midtrans-http-error";
+import { handleMidtransError } from "../errors-mapping/midtrans-error.mapper";
 
 @Injectable()
 export class MidtransSnapAdapter implements IMidtransPaymentPort {
-    constructor(private readonly midtransClient: MidtransClient) {}
+    private readonly logger = new Logger(MidtransSnapAdapter.name);
+    private readonly serverKey = process.env['SERVER_KEY'];
+
+    constructor(private readonly httpService: HttpService) {
+        if (!this.serverKey) throw new BadRequestException('SERVER_KEY is undefined');
+    }
+
     async generateSnapUrl (params: PaymentParams): Promise<MidtransGenerateResponseDto> {
         const transaction: MidtransGenerateRequestDto = params
         const path = `https://app.sandbox.midtrans.com/snap/v1/transactions`
-        const generate: MidtransGenerateResponseDto = await this.midtransClient.reqMidtrans<MidtransGenerateResponseDto, MidtransGenerateRequestDto>(path, transaction);
+        const generate: MidtransGenerateResponseDto = await this.createTransaction<MidtransGenerateResponseDto, MidtransGenerateRequestDto>(path, transaction);
         return generate
+    }
+
+    async createTransaction<T, U>(path: string, params: U): Promise<T> {
+        const encodedServerKey = Buffer.from(`${this.serverKey}:`, 'utf8').toString(
+            'base64'
+        );
+
+        this.logger.log(`Sending request to Midtrans: ${path}`);
+
+        const response = await lastValueFrom(
+            this.httpService
+            .post<T>(path, params, {
+                headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                Authorization: `Basic ${encodedServerKey}`,
+                },
+            })
+            .pipe(
+                timeout(HttpResilienceConfig.timeout),
+                retry({
+                count: HttpResilienceConfig.retry.maxAttempts,
+                delay: (
+                    error: AxiosError<MidtransErrorResponse>,
+                    retryCount: number
+                ) => {
+                    const status = error.response?.status;
+                    if (!this.isRetryableError(status)) {
+                    this.logger.error(`Non-retryable error: ${status}. No retry.`);
+                    return throwError(() => error);
+                    }
+                    const delayMs = this.calculateBackoffDelay(retryCount);
+                    this.logger.warn(
+                    `Retry attempt ${retryCount}/${HttpResilienceConfig.retry.maxAttempts}. ` +
+                        `Waiting ${delayMs}ms. Status: ${status || 'TIMEOUT'}`
+                    );
+                    return timer(delayMs);
+                },
+                }),
+                catchError((error: AxiosError<MidtransErrorResponse>) => {
+                const status = error.response?.status || 0;
+                const data = error.response?.data;
+                const message = data?.error_messages?.join(', ') || error.message;
+                this.logger.error(
+                    `All retry attempts exhausted. Status: ${status}`
+                );
+                const midtransError = new MidtransHttpError(status, data, message);
+                handleMidtransError(midtransError);
+                return throwError(() => error);
+                })
+            )
+        );
+        this.logger.log('Midtrans request successful');
+        return response.data;
+    }
+    isRetryableError(status: number | undefined): boolean {
+        if (!status) return true;
+        if (HttpResilienceConfig.nonRetryableStatusCodes.includes(status)) {
+            return false;
+        }
+        if (HttpResilienceConfig.retryableStatusCodes.includes(status)) {
+            return true;
+        }
+        return status >= 500;
+    }
+    calculateBackoffDelay(retryCount: number): number {
+        const { initialDelay, maxDelay, exponentialBackoff } =
+        HttpResilienceConfig.retry;
+        if (!exponentialBackoff) {
+            return initialDelay;
+        }
+        const exponentialDelay = initialDelay * Math.pow(2, retryCount - 1);
+        return Math.min(exponentialDelay, maxDelay);
     }
 }
