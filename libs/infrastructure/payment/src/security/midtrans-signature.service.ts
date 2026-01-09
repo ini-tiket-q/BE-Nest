@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { createHash } from 'crypto';
 
 @Injectable()
 export class MidtransSignatureService {
-  constructor() {
-    /* empty */
-  }
+  constructor(private configService: ConfigService) {}
 
   async verifySignature(
     order_id: string,
@@ -13,7 +12,7 @@ export class MidtransSignatureService {
     gross_amount: string,
     signature_key: string
   ): Promise<boolean> {
-    const server_key = process.env['SERVER_KEY'] || '';
+    const server_key = this.configService.get<string>('SERVER_KEY');
 
     const input = order_id + status_code + gross_amount + server_key;
 
