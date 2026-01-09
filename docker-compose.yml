@@ -1,27 +1,87 @@
-version: '3.8'
+version: "3.8"
 
 services:
   postgres:
     image: postgres:15
+    container_name: postgres
     environment:
       POSTGRES_USER: tiketq
       POSTGRES_PASSWORD: tiketq123
       POSTGRES_DB: tiketq_db
     ports:
-      - '5432:5432'
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
   redis:
     image: redis:7-alpine
+    container_name: redis
     ports:
-      - '6379:6379'
+      - "6379:6379"
+
+  # nginx:
+  #   image: nginx:alpine
+  #   container_name: nginx
+  #   ports:
+  #     - "80:80"
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+  #   depends_on:
+  #     - api-gateway
 
   jaeger:
     image: jaegertracing/all-in-one:latest
+    container_name: jaeger
     ports:
-      - '16686:16686'
-      - '14268:14268'
+      - "16686:16686"
+      - "14268:14268"
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: api-gateway-runner
+    container_name: api-gateway
+    ports:
+      - "3000:3000"
+    depends_on:
+      - transactions-service
+      - flight-service
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+
+  transactions-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: transactions-runner
+    container_name: transactions-service
+    ports:
+      - "3001:3001"
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      DATABASE_HOST: postgres
+      NODE_ENV: production
+      PORT: 3001
+
+  flight-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: flight-runner
+    container_name: flight-service
+    ports:
+      - "3002:3002"
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      DATABASE_HOST: postgres
+      NODE_ENV: production
+      PORT: 3002
 
 volumes:
   postgres_data:
