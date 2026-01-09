@@ -1,5 +1,5 @@
 import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
-import { MidtransCallbackDto } from './payment-webhook.dto';
+import { MidtransCallbackDto } from './dto/payment-webhook.dto';
 import { verifySignature } from '../security/midtrans-signature.service';
 
 @Controller('payments')
