@@ -3,6 +3,14 @@
  * This is only a minimal backend to get started.
  */
 
+// ⚠️ IMPORTANT: Initialize tracing BEFORE importing any NestJS modules
+// This ensures OpenTelemetry can properly instrument your application
+import { initializeTracing } from '@tiketq-be/common';
+
+// Initialize OpenTelemetry tracing for transactions-service
+initializeTracing('transactions-service', '1.0.0');
+
+// Now we can safely import NestJS modules
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
