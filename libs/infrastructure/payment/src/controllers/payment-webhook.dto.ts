@@ -6,4 +6,6 @@ export class MidtransCallbackDto {
   status_code!: string;
 
   gross_amount!: string;
+
+  transaction_status!: string;
 }

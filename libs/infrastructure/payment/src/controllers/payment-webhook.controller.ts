@@ -21,5 +21,18 @@ export class PaymentWebhookController {
     } else {
       console.log('failed to verify signature');
     }
+
+    const statusMap: Record<string, string> = {
+      settlement: 'PAID',
+      capture: 'PAID',
+      expire: 'EXPIRED',
+      pending: 'PENDING',
+    };
+
+    const status = statusMap[dto.transaction_status] ?? 'FAILED';
+
+    console.log(
+      `transaction status | orderId=${dto.order_id} | status=${status}`
+    );
   }
 }
