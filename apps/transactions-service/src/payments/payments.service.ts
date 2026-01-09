@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { CreatePaymentDto } from './dto/req/create-payment.dto';
-import { IMidtransPaymentPort } from 'libs/domain/src/transaction/ports';
+import { IMidtransPaymentPort } from '@tiketq-be/transactions_domain';
 
 @Injectable()
 export class PaymentsService {
