@@ -4,7 +4,7 @@ import { MidtransSnapAdapter } from '../adapters/midtrans-snap.adapter';
 import { MidtransClient } from './transactions/clients/midtrans.client';
 
 @Module({
-  imports: [HttpModule.register({})],
+  imports: [HttpModule],
   controllers: [],
   providers: [{ provide: 'IMidtransPaymentPort', useClass: MidtransSnapAdapter }, MidtransClient],
   exports: ['IMidtransPaymentPort'],
