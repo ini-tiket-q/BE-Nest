@@ -2,10 +2,12 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CacheModule } from '@nestjs/cache-manager';
+import { TransactionsController } from './transactions.controller';
 
 @Module({
   imports: [CacheModule.register()],
-  controllers: [AppController],
+  controllers: [AppController, TransactionsController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }
+
