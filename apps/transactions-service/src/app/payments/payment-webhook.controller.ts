@@ -1,4 +1,11 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  InternalServerErrorException,
+  Post,
+} from '@nestjs/common';
 import { MidtransSignatureService } from '../../../../../libs/infrastructure/payment/src/security/midtrans-signature.service';
 import { MidtransCallbackDto } from './dto/payment-webhook.dto';
 
@@ -19,10 +26,8 @@ export class PaymentWebhookController {
       dto.signature_key
     );
 
-    if (isVerified) {
-      console.log('success verify signature');
-    } else {
-      console.log('failed to verify signature');
+    if (!isVerified) {
+      throw new InternalServerErrorException();
     }
 
     const statusMap: Record<string, string> = {
@@ -37,5 +42,7 @@ export class PaymentWebhookController {
     console.log(
       `transaction status | orderId=${dto.order_id} | status=${status}`
     );
+
+    return { message: 'OK' };
   }
 }
