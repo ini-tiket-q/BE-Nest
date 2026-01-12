@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
-import { PaymentWebhookController } from '../controllers/payment-webhook.controller';
 import { MidtransSignatureService } from '../security/midtrans-signature.service';
 
 @Module({
-  controllers: [PaymentWebhookController],
+  controllers: [],
   providers: [MidtransSignatureService],
-  exports: [],
+  exports: [MidtransSignatureService],
 })
 export class PaymentModule {}
