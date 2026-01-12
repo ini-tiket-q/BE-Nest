@@ -18,9 +18,6 @@ export class MidtransSignatureService {
 
     const encrypted_input = createHash('sha512').update(input).digest('hex');
 
-    if (encrypted_input !== signature_key) {
-      return false;
-    }
-    return true;
+    return encrypted_input === signature_key;
   }
 }
