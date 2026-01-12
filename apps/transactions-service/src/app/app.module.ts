@@ -4,6 +4,7 @@ import { PaymentModule } from '../../../../libs/infrastructure/payment/src/lib/p
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PaymentServiceModule } from './payments/payment-service.module';
+import { PaymentsModule } from '../payments/payments.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { PaymentServiceModule } from './payments/payment-service.module';
     }),
     PaymentModule,
     PaymentServiceModule,
+    PaymentsModule
   ],
   controllers: [AppController],
   providers: [AppService],

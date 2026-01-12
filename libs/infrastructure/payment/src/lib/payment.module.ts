@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
-import { MidtransSignatureService } from '../security/midtrans-signature.service';
+import { HttpModule } from '@nestjs/axios';
+import { MidtransSnapAdapter } from '../adapters/midtrans-snap.adapter';
 
 @Module({
+  imports: [HttpModule],
   controllers: [],
-  providers: [MidtransSignatureService],
-  exports: [MidtransSignatureService],
+  providers: [{ provide: 'IMidtransPaymentPort', useClass: MidtransSnapAdapter }],
+  exports: ['IMidtransPaymentPort'],
 })
 export class PaymentModule {}
