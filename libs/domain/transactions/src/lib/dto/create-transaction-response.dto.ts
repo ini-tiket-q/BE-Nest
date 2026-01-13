@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { TransactionStatus } from '../entities';
+import { TransactionStatus } from '../transaction.entities';
 
 /**
  * Response DTO for transaction creation
