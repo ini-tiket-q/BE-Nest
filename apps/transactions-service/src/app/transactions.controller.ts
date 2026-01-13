@@ -16,10 +16,13 @@ import {
     CreateTransactionResponseDto,
     TransactionStatus,
 } from '@tiketq-be/transactions_domain';
+import { CreateTransactionUseCase } from '@tiketq-be/application/transactions';
 
 @ApiTags('transactions')
 @Controller('transactions')
 export class TransactionsController {
+    constructor(private readonly createTransactionUseCase: CreateTransactionUseCase) {}
+
     @Post()
     @HttpCode(HttpStatus.CREATED)
     @ApiOperation({
@@ -67,16 +70,9 @@ export class TransactionsController {
         status: HttpStatus.BAD_REQUEST,
         description: 'Invalid input data',
     })
-    createTransaction(
+    async createTransaction(
         @Body() createTransactionDto: CreateTransactionDto
-    ): CreateTransactionResponseDto {
-        // Mock response for API contract demonstration
-        const response = new CreateTransactionResponseDto();
-        response.transactionId = '550e8400-e29b-41d4-a716-446655440099';
-        response.status = TransactionStatus.CREATED;
-        response.amount = createTransactionDto.amount;
-        response.currency = createTransactionDto.currency;
-        response.createdAt = new Date().toISOString();
-        return response;
+    ): Promise<CreateTransactionResponseDto> {
+        return await this.createTransactionUseCase.execute(createTransactionDto);
     }
 }
