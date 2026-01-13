@@ -68,4 +68,40 @@ export class TransactionRepository implements ITransactionRepositoryPort {
             model.updatedAt
         );
     }
+
+    async findByBookingId(bookingId: string): Promise<Transaction[]> {
+        const models = await this.repo.find({ where: { bookingId } });
+        return models.map(model => new Transaction(
+            model.id,
+            model.amount,
+            model.currency,
+            model.status as TransactionStatus,
+            model.bookingId,
+            new CustomerInfo(
+                model.customerName,
+                model.customerEmail,
+                model.customerPhone || undefined
+            ),
+            model.createdAt,
+            model.updatedAt
+        ));
+    }
+
+    async findByCustomerEmail(email: string): Promise<Transaction[]> {
+        const models = await this.repo.find({ where: { customerEmail: email } });
+        return models.map(model => new Transaction(
+            model.id,
+            model.amount,
+            model.currency,
+            model.status as TransactionStatus,
+            model.bookingId,
+            new CustomerInfo(
+                model.customerName,
+                model.customerEmail,
+                model.customerPhone || undefined
+            ),
+            model.createdAt,
+            model.updatedAt
+        ));
+    }
 }
