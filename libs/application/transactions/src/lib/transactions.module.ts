@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { DatabaseModule } from '@tiketq-be/infrastructure/database';
+import { DatabaseModule } from '@tiketq-be/database';
 import { CreateTransactionUseCase } from './use-cases/create-transaction.use-case';
 
 @Module({

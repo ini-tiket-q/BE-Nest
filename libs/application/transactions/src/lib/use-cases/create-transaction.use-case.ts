@@ -1,9 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
-import { Transaction, CustomerInfo } from '@tiketq-be/domain/transactions';
-import { ITransactionRepositoryPort } from '@tiketq-be/domain/transactions';
-import { CreateTransactionDto } from '../../dto/create-transaction.dto';
-import { CreateTransactionResponseDto } from '../../dto/create-transaction-response.dto';
+import { Transaction, CustomerInfo, ITransactionRepositoryPort, CreateTransactionDto, CreateTransactionResponseDto } from '@tiketq-be/transactions_domain';
 
 @Injectable()
 export class CreateTransactionUseCase {
@@ -44,7 +41,7 @@ export class CreateTransactionUseCase {
       status: savedTransaction.status,
       amount: savedTransaction.amount,
       currency: savedTransaction.currency,
-      createdAt: savedTransaction.createdAt,
+      createdAt: savedTransaction.createdAt.toISOString(),
     };
   }
 }

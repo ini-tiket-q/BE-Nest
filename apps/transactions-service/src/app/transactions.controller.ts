@@ -16,7 +16,7 @@ import {
     CreateTransactionResponseDto,
     TransactionStatus,
 } from '@tiketq-be/transactions_domain';
-import { CreateTransactionUseCase } from '@tiketq-be/application/transactions';
+import { CreateTransactionUseCase } from '@tiketq-be/transactions';
 
 @ApiTags('transactions')
 @Controller('transactions')
