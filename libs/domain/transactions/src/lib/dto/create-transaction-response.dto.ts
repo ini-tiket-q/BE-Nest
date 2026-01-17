@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { TransactionStatus } from '../entities';
+import { TransactionStatus } from '../transaction.entities';
 
 /**
  * Response DTO for transaction creation
@@ -15,7 +15,7 @@ export class CreateTransactionResponseDto {
     @ApiProperty({
         description: 'Current status of the transaction',
         enum: TransactionStatus,
-        example: TransactionStatus.PENDING,
+        example: TransactionStatus.CREATED,
     })
     status!: TransactionStatus;
 

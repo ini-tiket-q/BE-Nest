@@ -14,12 +14,14 @@ import {
 import {
     CreateTransactionDto,
     CreateTransactionResponseDto,
-    TransactionStatus,
 } from '@tiketq-be/transactions_domain';
+import { CreateTransactionUseCase } from '@tiketq-be/transactions';
 
 @ApiTags('transactions')
 @Controller('transactions')
 export class TransactionsController {
+    constructor(private readonly createTransactionUseCase: CreateTransactionUseCase) {}
+
     @Post()
     @HttpCode(HttpStatus.CREATED)
     @ApiOperation({
@@ -28,19 +30,24 @@ export class TransactionsController {
     })
     @ApiBody({
         type: CreateTransactionDto,
-        description: 'Transaction creation payload',
+        description: 'Transaction creation payload. Customer fields are required for guest checkout.',
         examples: {
-            example1: {
-                summary: 'Single passenger booking',
+            guestCheckout: {
+                summary: 'Guest checkout (with customer info)',
+                description: 'Used when user is not authenticated',
                 value: {
                     flightId: '550e8400-e29b-41d4-a716-446655440000',
                     passengerIds: ['550e8400-e29b-41d4-a716-446655440001'],
                     amount: 1500000,
                     currency: 'IDR',
+                    customerName: 'John Doe',
+                    customerEmail: 'john.doe@example.com',
+                    customerPhone: '+6281234567890',
                 },
             },
-            example2: {
-                summary: 'Multiple passengers booking',
+            authenticatedUser: {
+                summary: 'Authenticated user (without customer info)',
+                description: 'Customer info will be extracted from JWT token',
                 value: {
                     flightId: '550e8400-e29b-41d4-a716-446655440000',
                     passengerIds: [
@@ -62,16 +69,9 @@ export class TransactionsController {
         status: HttpStatus.BAD_REQUEST,
         description: 'Invalid input data',
     })
-    createTransaction(
+    async createTransaction(
         @Body() createTransactionDto: CreateTransactionDto
-    ): CreateTransactionResponseDto {
-        // Mock response for API contract demonstration
-        const response = new CreateTransactionResponseDto();
-        response.transactionId = '550e8400-e29b-41d4-a716-446655440099';
-        response.status = TransactionStatus.PENDING;
-        response.amount = createTransactionDto.amount;
-        response.currency = createTransactionDto.currency;
-        response.createdAt = new Date().toISOString();
-        return response;
+    ): Promise<CreateTransactionResponseDto> {
+        return await this.createTransactionUseCase.execute(createTransactionDto);
     }
 }

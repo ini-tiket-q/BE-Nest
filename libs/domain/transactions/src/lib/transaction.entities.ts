@@ -1,4 +1,5 @@
 export enum TransactionStatus {
+    CREATED = 'CREATED',
     PENDING = 'PENDING',
     PAID = 'PAID',
     FAILED = 'FAILED',
@@ -26,6 +27,7 @@ export class Transaction {
     constructor(
         public readonly id: string,
         public readonly amount: number,
+        public readonly currency: string,
         public readonly status: TransactionStatus,
         public readonly bookingId: string,
         public readonly customerInfo: CustomerInfo,
@@ -36,6 +38,7 @@ export class Transaction {
     static create(
         id: string,
         amount: number,
+        currency: string,
         bookingId: string,
         customerInfo: CustomerInfo
     ): Transaction {
@@ -45,16 +48,37 @@ export class Transaction {
         if (!bookingId || bookingId.trim().length === 0) {
             throw new Error('Booking ID is required');
         }
+        if (!currency || currency.trim().length === 0) {
+            throw new Error('Currency is required');
+        }
 
         const now = new Date();
         return new Transaction(
             id,
             amount,
-            TransactionStatus.PENDING,
+            currency.toUpperCase().trim(),
+            TransactionStatus.CREATED,
             bookingId.trim(),
             customerInfo,
             now,
             now
+        );
+    }
+
+    initiatePayment(): Transaction {
+        if (this.status !== TransactionStatus.CREATED) {
+            throw new Error('Only created transactions can be initiated for payment');
+        }
+
+        return new Transaction(
+            this.id,
+            this.amount,
+            this.currency,
+            TransactionStatus.PENDING,
+            this.bookingId,
+            this.customerInfo,
+            this.createdAt,
+            new Date()
         );
     }
 
@@ -66,6 +90,7 @@ export class Transaction {
         return new Transaction(
             this.id,
             this.amount,
+            this.currency,
             TransactionStatus.PAID,
             this.bookingId,
             this.customerInfo,
@@ -82,6 +107,7 @@ export class Transaction {
         return new Transaction(
             this.id,
             this.amount,
+            this.currency,
             TransactionStatus.FAILED,
             this.bookingId,
             this.customerInfo,
@@ -92,6 +118,10 @@ export class Transaction {
 
     isPending(): boolean {
         return this.status === TransactionStatus.PENDING;
+    }
+
+    isCreated(): boolean {
+        return this.status === TransactionStatus.CREATED;
     }
 
     isPaid(): boolean {
