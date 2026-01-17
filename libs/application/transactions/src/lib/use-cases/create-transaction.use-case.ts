@@ -13,15 +13,12 @@ export class CreateTransactionUseCase {
     // Generate transaction ID
     const transactionId = uuidv4();
 
-    // Create customer info value object if customer data provided
-    let customerInfo: CustomerInfo | undefined;
-    if (dto.customerName || dto.customerEmail) {
-      customerInfo = CustomerInfo.create(
-        dto.customerName || 'Guest',
-        dto.customerEmail || '',
-        dto.customerPhone,
-      );
-    }
+    // Create customer info - use provided data or default to Guest
+    const customerInfo = CustomerInfo.create(
+      dto.customerName || 'Guest',
+      dto.customerEmail || 'guest@example.com',
+      dto.customerPhone,
+    );
 
     // Create transaction domain entity
     const transaction = Transaction.create(

@@ -14,7 +14,6 @@ import {
 import {
     CreateTransactionDto,
     CreateTransactionResponseDto,
-    TransactionStatus,
 } from '@tiketq-be/transactions_domain';
 import { CreateTransactionUseCase } from '@tiketq-be/transactions';
 

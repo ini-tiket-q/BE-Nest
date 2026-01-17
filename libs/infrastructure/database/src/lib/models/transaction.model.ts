@@ -9,35 +9,35 @@ import {
 @Entity('transactions')
 export class TransactionModel {
     @PrimaryColumn('uuid')
-    id: string;
+    id!: string;
 
     @Column('decimal', { precision: 10, scale: 2 })
-    amount: number;
+    amount!: number;
 
     @Column({ length: 3 })
-    currency: string;
+    currency!: string;
 
     @Column({ 
         type: 'enum', 
         enum: ['CREATED', 'PENDING', 'PAID', 'FAILED'] 
     })
-    status: string;
+    status!: string;
 
     @Column({ name: 'booking_id' })
-    bookingId: string;
+    bookingId!: string;
 
     @Column({ name: 'customer_name' })
-    customerName: string;
+    customerName!: string;
 
     @Column({ name: 'customer_email' })
-    customerEmail: string;
+    customerEmail!: string;
 
     @Column({ name: 'customer_phone', nullable: true })
-    customerPhone: string | null;
+    customerPhone!: string | null;
 
     @CreateDateColumn({ name: 'created_at' })
-    createdAt: Date;
+    createdAt!: Date;
 
     @UpdateDateColumn({ name: 'updated_at' })
-    updatedAt: Date;
+    updatedAt!: Date;
 }
