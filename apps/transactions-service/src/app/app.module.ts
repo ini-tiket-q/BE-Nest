@@ -1,10 +1,13 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { CacheModule } from '@nestjs/cache-manager';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { CacheModule } from '@nestjs/cache-manager';
 import { TransactionsController } from './transactions.controller';
 import { TransactionsModule } from '@tiketq-be/transactions';
+import { PaymentModule } from '../../../../libs/infrastructure/payment/src/lib/payment.module';
+import { PaymentServiceModule } from './payments/payment-service.module';
+import { PaymentsModule } from '../payments/payments.module';
 
 @Module({
   imports: [
@@ -14,6 +17,9 @@ import { TransactionsModule } from '@tiketq-be/transactions';
     }),
     CacheModule.register(),
     TransactionsModule,
+    PaymentModule,
+    PaymentServiceModule,
+    PaymentsModule,
   ],
   controllers: [AppController, TransactionsController],
   providers: [AppService],
