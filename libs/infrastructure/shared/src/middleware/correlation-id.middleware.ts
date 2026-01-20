@@ -2,7 +2,7 @@ import { Injectable, Logger, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 
-const CORRELATION_ID_HEADER = 'x-correlation-id';
+export const CORRELATION_ID_HEADER = 'x-correlation-id';
 
 @Injectable()
 export class CorrelationIdMiddleware implements NestMiddleware {
