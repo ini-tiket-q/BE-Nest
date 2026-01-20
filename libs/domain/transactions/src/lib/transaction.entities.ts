@@ -38,7 +38,7 @@ export class Transaction {
 
     static create(
         id: string,
-        userId: string,
+        userId: string | undefined,
         amount: number,
         currency: string,
         bookingId: string,
