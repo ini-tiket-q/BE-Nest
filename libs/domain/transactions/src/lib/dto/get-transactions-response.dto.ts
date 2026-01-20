@@ -1,10 +1,10 @@
-import { Type } from "class-transformer";
 import { TransactionsDataDto } from "./transactions-data.dto";
 import { TransactionsMetaDto } from "./transactions-meta.dto";
+import { ApiProperty } from "@nestjs/swagger";
 
 export class GetTransactionsResponseDto {
-    // @Type(() => Object)
+    @ApiProperty({ type: () => TransactionsDataDto, isArray: true })
     data!: TransactionsDataDto[];
-    // @Type(() => Object)
+    @ApiProperty({ type: () => TransactionsMetaDto })
     meta!: TransactionsMetaDto;
 }
