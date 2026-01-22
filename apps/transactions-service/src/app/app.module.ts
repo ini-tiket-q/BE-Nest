@@ -8,6 +8,7 @@ import { TransactionsModule } from '@tiketq-be/transactions';
 import { PaymentModule } from '../../../../libs/infrastructure/payment/src/lib/payment.module';
 import { PaymentServiceModule } from './payments/payment-service.module';
 import { PaymentsModule } from '../payments/payments.module';
+import { AppThrottlerModule } from '@tiketq-be/shared';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { PaymentsModule } from '../payments/payments.module';
     PaymentModule,
     PaymentServiceModule,
     PaymentsModule,
+    AppThrottlerModule,
   ],
   controllers: [AppController, TransactionsController],
   providers: [AppService],
