@@ -11,6 +11,9 @@ export class TransactionModel {
     @PrimaryColumn('uuid')
     id!: string;
 
+    @Column({ name: 'user_id', nullable: true })
+    userId?: string;
+
     @Column('decimal', { precision: 10, scale: 2 })
     amount!: number;
 

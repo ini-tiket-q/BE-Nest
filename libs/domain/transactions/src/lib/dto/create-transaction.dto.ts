@@ -21,6 +21,10 @@ export class CreateTransactionDto {
         format: 'uuid',
     })
     @IsUUID('4')
+    @IsOptional()
+    userId?: string;
+
+    @IsUUID('4')
     @IsNotEmpty()
     flightId!: string;
 

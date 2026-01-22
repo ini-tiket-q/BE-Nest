@@ -1,4 +1,6 @@
-import { Transaction } from '../transaction.entities';
+import { TransactionsDataDto } from '../dto/transactions-data.dto';
+import { Transaction, TransactionStatus } from '../transaction.entities';
+import { FindOperator } from 'typeorm';
 
 /**
  * Repository Port - defines contract for transaction persistence
@@ -33,4 +35,30 @@ export interface ITransactionRepositoryPort {
      * @returns Array of transactions for the customer
      */
     findByCustomerEmail(email: string): Promise<Transaction[]>;
+
+    findByUserId(query: TransactionsQuery): Promise<TransactionsDataDto[]>
+
+    countByUserId(query: CountTransactionsQuery): Promise<number>
+}
+
+export interface TransactionsQuery {
+    userId: string;
+    page: number;
+    limit: number;
+    startDate?: Date;
+    endDate?: Date
+    status?: TransactionStatus
+}
+
+export interface CountTransactionsQuery {
+    userId: string;
+    startDate?: Date;
+    endDate?: Date
+    status?: TransactionStatus
+}
+
+export interface FilterQueryByUserId {
+    userId: string;
+    createdAt?: FindOperator<Date>;
+    status?: TransactionStatus
 }

@@ -1,26 +1,32 @@
 import {
     Body,
     Controller,
+    Get,
     HttpCode,
     HttpStatus,
     Post,
+    Query,
 } from '@nestjs/common';
 import {
     ApiBody,
     ApiOperation,
     ApiResponse,
     ApiTags,
+    getSchemaPath,
 } from '@nestjs/swagger';
 import {
     CreateTransactionDto,
     CreateTransactionResponseDto,
+    TransactionsDataDto,
+    TransactionsMetaDto,
 } from '@tiketq-be/transactions_domain';
-import { CreateTransactionUseCase } from '@tiketq-be/transactions';
+import { CreateTransactionUseCase, GetTransactionsUseCase } from '@tiketq-be/transactions';
+import { GetTransactionsQueryDto } from './dto/get-transaction-query.dto';
 
 @ApiTags('transactions')
 @Controller('transactions')
 export class TransactionsController {
-    constructor(private readonly createTransactionUseCase: CreateTransactionUseCase) {}
+    constructor(private readonly createTransactionUseCase: CreateTransactionUseCase, private readonly getTransactionsUseCase: GetTransactionsUseCase) {}
 
     @Post()
     @HttpCode(HttpStatus.CREATED)
@@ -73,5 +79,25 @@ export class TransactionsController {
         @Body() createTransactionDto: CreateTransactionDto
     ): Promise<CreateTransactionResponseDto> {
         return await this.createTransactionUseCase.execute(createTransactionDto);
+    }
+
+    @Get()
+    @ApiOperation({
+        summary: 'Get transaction history',
+        description: 'Retrieve paginated transaction history for a user with optional filters'
+    })
+    @ApiResponse({
+        status: 200,
+        description: 'Transactions retrieved successfully',
+        schema: {
+            type: 'object',
+            properties: {
+                data: { type: 'array', items: { $ref: getSchemaPath(TransactionsDataDto) } },
+                meta: { $ref: getSchemaPath(TransactionsMetaDto) }
+            }
+        }
+    })
+    async getTransactions(@Query() query: GetTransactionsQueryDto) {
+        return this.getTransactionsUseCase.execute(query)
     }
 }

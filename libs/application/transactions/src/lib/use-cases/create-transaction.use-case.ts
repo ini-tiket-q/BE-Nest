@@ -23,6 +23,7 @@ export class CreateTransactionUseCase {
     // Create transaction domain entity
     const transaction = Transaction.create(
       transactionId,
+      dto.userId,
       dto.amount,
       dto.currency,
       dto.flightId,

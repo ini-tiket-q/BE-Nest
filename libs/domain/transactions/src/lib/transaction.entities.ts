@@ -26,6 +26,7 @@ export class CustomerInfo {
 export class Transaction {
     constructor(
         public readonly id: string,
+        public readonly userId: string | undefined,
         public readonly amount: number,
         public readonly currency: string,
         public readonly status: TransactionStatus,
@@ -37,6 +38,7 @@ export class Transaction {
 
     static create(
         id: string,
+        userId: string | undefined,
         amount: number,
         currency: string,
         bookingId: string,
@@ -55,6 +57,7 @@ export class Transaction {
         const now = new Date();
         return new Transaction(
             id,
+            userId,
             amount,
             currency.toUpperCase().trim(),
             TransactionStatus.CREATED,
@@ -72,6 +75,7 @@ export class Transaction {
 
         return new Transaction(
             this.id,
+            this.userId,
             this.amount,
             this.currency,
             TransactionStatus.PENDING,
@@ -89,6 +93,7 @@ export class Transaction {
 
         return new Transaction(
             this.id,
+            this.userId,
             this.amount,
             this.currency,
             TransactionStatus.PAID,
@@ -106,6 +111,7 @@ export class Transaction {
 
         return new Transaction(
             this.id,
+            this.userId,
             this.amount,
             this.currency,
             TransactionStatus.FAILED,
