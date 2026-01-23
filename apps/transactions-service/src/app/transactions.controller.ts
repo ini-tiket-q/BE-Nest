@@ -119,6 +119,68 @@ export class TransactionsController {
   }
 
   @Get(':transactionId')
+  @ApiOperation({
+    summary: 'Get transaction detail',
+    description:
+      'Retrieve detailed information about a specific transaction including booking details',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Transaction detail retrieved',
+    schema: {
+      type: 'object',
+      properties: {
+        transaction: {
+          type: 'object',
+          properties: {
+            id: {
+              type: 'string',
+              example: '550e8400-e29b-41d4-a716-446655440000',
+            },
+            amount: { type: 'number', example: 1500000 },
+            currency: { type: 'string', example: 'IDR' },
+            status: { type: 'string', example: 'PENDING' },
+            bookingId: {
+              type: 'string',
+              example: '550e8400-e29b-41d4-a716-446655440001',
+            },
+            customerInfo: {
+              type: 'object',
+              properties: {
+                name: { type: 'string', example: 'John Doe' },
+                email: { type: 'string', example: 'john@example.com' },
+                phone: { type: 'string', example: '+6281234567890' },
+              },
+            },
+            createdAt: {
+              type: 'string',
+              format: 'date-time',
+              example: '2024-01-15T10:30:00Z',
+            },
+            updatedAt: {
+              type: 'string',
+              format: 'date-time',
+              example: '2024-01-15T10:30:00Z',
+            },
+          },
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Transaction not found',
+  })
+  @ApiParam({
+    name: 'transactionId',
+    type: String,
+    description: 'Transaction ID',
+  })
+  @ApiHeader({
+    name: 'X-Correlation-ID',
+    required: false,
+    description: 'Request tracking ID',
+  })
   async getTransactionDetail(@Param('transactionId') transactionId: string) {
     return this.getTransactionDetailUseCase.execute(transactionId);
   }
