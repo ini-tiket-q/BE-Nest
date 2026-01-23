@@ -1,6 +1,7 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "ignoreDeprecations": "5.0",
     "rootDir": ".",
     "sourceMap": true,
     "declaration": false,
@@ -26,7 +27,8 @@
       "@tiketq-be/flight-vendor": [
         "libs/infrastructure/flight-vendor/src/index.ts"
       ],
-      "@tiketq-be/common": ["libs/infrastructure/common/src/index.ts"]
+      "@tiketq-be/common": ["libs/infrastructure/common/src/index.ts"],
+      "@tiketq-be/shared": ["libs/infrastructure/shared/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
