@@ -1,4 +1,4 @@
-import { SearchFlightQuery, FlightOffer } from './models';
+import { FlightOffer, SearchFlightQuery } from "./models";
 
 export interface IFlightVendorPort {
     searchFlights(query: SearchFlightQuery): Promise<FlightOffer[]>;
