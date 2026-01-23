@@ -34,7 +34,7 @@ export interface ITransactionRepositoryPort {
      * @param email - Customer email address
      * @returns Array of transactions for the customer
      */
-    findByCustomerEmail(query: QueryByEmail): Promise<Transaction[]>;
+    findByCustomerEmail(email: string): Promise<Transaction[]>;
 
     findByUserId(query: QueryByUserId): Promise<TransactionsDataDto[]>
 
