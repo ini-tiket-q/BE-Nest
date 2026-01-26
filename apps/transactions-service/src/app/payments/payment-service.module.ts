@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
+import { TransactionsModule } from '@tiketq-be/transactions';
 import { PaymentWebhookController } from './payment-webhook.controller';
-import { MidtransSignatureService } from 'libs/infrastructure/payment/src/security/midtrans-signature.service';
 
 @Module({
+  imports: [TransactionsModule],
   controllers: [PaymentWebhookController],
-  providers: [MidtransSignatureService],
+  providers: [],
 })
 export class PaymentServiceModule {}
