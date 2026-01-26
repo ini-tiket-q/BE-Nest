@@ -7,8 +7,7 @@ import {
   Post,
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { ProcessPaymentCallbackUseCase } from '@tiketq-be/transactions';
-import { MidtransCallbackDto } from './dto/payment-webhook.dto';
+import { MidtransCallbackDto, ProcessPaymentCallbackUseCase } from '@tiketq-be/transactions';
 
 @ApiTags('Payments')
 @Controller('payments')
