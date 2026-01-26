@@ -1,6 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { MidtransSignatureService } from '@tiketq-be/payment';
 import { MidtransCallbackDto } from '../dto/payment-webhook.dto';
+import { PaymentSignatureInvalidException } from '@tiketq-be/transactions_domain';
 
 @Injectable()
 export class ProcessPaymentCallbackUseCase {
@@ -25,7 +26,9 @@ export class ProcessPaymentCallbackUseCase {
       this.logger.error(
         `Failed to verify signature_key order_id ${dto.order_id}`
       );
-      throw new NotFoundException('failed to verify signature_key!');
+      throw new PaymentSignatureInvalidException(
+        `Invalid signature key order_id ${dto.order_id}`
+      );
     }
 
     return { message: 'this is works right!' };
