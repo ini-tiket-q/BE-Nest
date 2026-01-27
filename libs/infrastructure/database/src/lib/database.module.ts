@@ -17,7 +17,7 @@ import { PaymentRepository } from './repositories/payment.repository';
         username: configService.get('DATABASE_USER'),
         password: configService.get('DATABASE_PASSWORD'),
         database: configService.get('DATABASE_NAME'),
-        entities: [__dirname + '/**/*.model{.ts,.js}'],
+        entities: [__dirname + '/**/*.model{.ts,.js}', TransactionModel],
         synchronize: true,
         logging: true,
       }),
