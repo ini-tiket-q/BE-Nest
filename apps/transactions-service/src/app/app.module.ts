@@ -5,10 +5,10 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TransactionsController } from './transactions.controller';
 import { TransactionsModule } from '@tiketq-be/transactions';
-import { PaymentModule } from '../../../../libs/infrastructure/payment/src/lib/payment.module';
 import { PaymentServiceModule } from './payments/payment-service.module';
 import { PaymentsModule } from '../payments/payments.module';
 import { AppThrottlerModule } from '@tiketq-be/shared';
+import { TransactionsInfraModule } from '@tiketq-be/transactions_infra';
 
 @Module({
   imports: [
@@ -18,13 +18,12 @@ import { AppThrottlerModule } from '@tiketq-be/shared';
     }),
     CacheModule.register(),
     TransactionsModule,
-    PaymentModule,
     PaymentServiceModule,
     PaymentsModule,
     AppThrottlerModule,
+    TransactionsInfraModule,
   ],
   controllers: [AppController, TransactionsController],
   providers: [AppService],
 })
-export class AppModule { }
-
+export class AppModule {}

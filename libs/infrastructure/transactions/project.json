@@ -1,9 +1,9 @@
 {
-  "name": "infrastructure-transactions",
+  "name": "transactions_infra",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/infrastructure/transactions/src",
   "projectType": "library",
   "tags": [],
-  "// targets": "to see all targets run: nx show project infrastructure-transactions --web",
+  "// targets": "to see all targets run: nx show project transactions_infra --web",
   "targets": {}
 }
