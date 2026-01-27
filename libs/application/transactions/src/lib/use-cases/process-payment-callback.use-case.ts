@@ -39,8 +39,22 @@ export class ProcessPaymentCallbackUseCase {
       );
     }
 
-    // Create payment entity with initial status
-    const payment = new Payment(dto.order_id, PaymentStatus.PENDING);
+    // Fetch existing payment from repository
+    const existingPayment = await this.paymentRepository.findByOrderId(
+      dto.order_id
+    );
+
+    if (!existingPayment) {
+      this.logger.warn(
+        `Payment not found for order_id ${dto.order_id}, creating new payment`
+      );
+    }
+
+    // Create payment entity - use existing or create new
+    const payment = new Payment(
+      dto.order_id,
+      (existingPayment?.status as PaymentStatus) || PaymentStatus.PENDING
+    );
 
     this.logger.log(
       `Payment entity created: order_id=${payment.id}, initial_status=${payment.status}`

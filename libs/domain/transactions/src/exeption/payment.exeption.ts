@@ -3,7 +3,7 @@ import { BadRequestException, NotFoundException } from '@nestjs/common';
 export class PaymentSignatureInvalidException extends NotFoundException {
   constructor(message = 'Payment operation failed') {
     super(message);
-    this.name = 'PaymentFailedException';
+    this.name = 'PaymentSignatureInvalidException';
   }
 }
 
