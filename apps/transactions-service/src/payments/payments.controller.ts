@@ -2,11 +2,12 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { PaymentsService } from './payments.service';
 import { CreatePaymentDto } from './dto/req/create-payment.dto';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiHeader } from '@nestjs/swagger';
+import { GetPaymentUrlUseCase } from '@tiketq-be/transactions';
 
 @Controller('payments')
 @ApiTags('payments')
 export class PaymentsController {
-  constructor(private readonly paymentsService: PaymentsService) {}
+  constructor(private readonly paymentsService: PaymentsService, private readonly getPaymentUrlUseCase: GetPaymentUrlUseCase) {}
   @Post('create-transaction')
   async transaction(@Body() order: CreatePaymentDto): Promise<{ token: string, redirect_url: string }> {
     const transaction = await this.paymentsService.createTransaction(order)
