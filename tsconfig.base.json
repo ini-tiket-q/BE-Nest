@@ -28,7 +28,10 @@
         "libs/infrastructure/flight-vendor/src/index.ts"
       ],
       "@tiketq-be/common": ["libs/infrastructure/common/src/index.ts"],
-      "@tiketq-be/shared": ["libs/infrastructure/shared/src/index.ts"]
+      "@tiketq-be/shared": ["libs/infrastructure/shared/src/index.ts"],
+      "@tiketq-be/transactions-infra": [
+        "libs/infrastructure/transactions/src/index.ts"
+      ]
     }
   },
   "exclude": ["node_modules", "tmp"]

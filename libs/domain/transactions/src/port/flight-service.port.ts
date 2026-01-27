@@ -1,4 +1,4 @@
-export interface FlightServicePort {
+export interface IFlightServicePort {
   finalizeBooking(request: FinalizeBookingRequest): Promise<void>;
 }
 
