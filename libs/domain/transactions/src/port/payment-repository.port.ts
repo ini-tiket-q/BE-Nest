@@ -1,9 +1,12 @@
 import { Payment } from '../entities/payment.entity';
 
-export interface PaymentIdStatusDto {
+export interface PaymentDetailsDto {
   id: string;
   status: string;
   amount: number;
+  bookingId: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface IPaymentRepositoryPort {
@@ -18,5 +21,5 @@ export interface IPaymentRepositoryPort {
    * @param orderId The order ID to search for
    * @returns Payment with only id and status, or null if not found
    */
-  findById(orderId: string): Promise<PaymentIdStatusDto | null>;
+  findById(orderId: string): Promise<PaymentDetailsDto | null>;
 }
