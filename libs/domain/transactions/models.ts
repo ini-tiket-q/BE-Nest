@@ -5,3 +5,8 @@ export interface TransactionDetails {
   order_id: string;
   gross_amount: number;
 }
+
+export interface MidtransResponseDto {
+    token: string
+    redirect_url: string
+}

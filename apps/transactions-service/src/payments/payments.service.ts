@@ -5,7 +5,7 @@ import { IMidtransPaymentPort } from '@tiketq-be/transactions_domain';
 @Injectable()
 export class PaymentsService {
   constructor(@Inject('IMidtransPaymentPort') private readonly midtransSnapAdapter: IMidtransPaymentPort) {}
-  async createTransaction(order: CreatePaymentDto): Promise<{ token: string, redirect_url: string }> {
+  async createTransaction(order: CreatePaymentDto): Promise<string> {
     const param = {
       transaction_details: {
         order_id: order.order_id,
