@@ -1,16 +1,18 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Inject, Injectable } from '@nestjs/common';
 import {
   IMidtransPaymentPort,
+  IPaymentRepositoryPort,
   PaymentAlreadyProcessedException,
   PaymentNotFoundException,
-} from "@tiketq-be/transactions_domain";
+} from '@tiketq-be/transactions_domain';
 
 @Injectable()
 export class GetPaymentUrlUseCase {
   constructor(
     @Inject('IMidtransPaymentPort')
     private paymentGateway: IMidtransPaymentPort,
-    //private paymentRepository: PaymentRepositoryPort,
+    @Inject('IPaymentRepositoryPort')
+    private readonly paymentRepository: IPaymentRepositoryPort
   ) {}
 
   async execute(transactionId: string): Promise<string> {

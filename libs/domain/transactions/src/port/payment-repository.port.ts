@@ -18,5 +18,5 @@ export interface IPaymentRepositoryPort {
    * @param orderId The order ID to search for
    * @returns Payment with only id and status, or null if not found
    */
-  findByOrderId(orderId: string): Promise<PaymentIdStatusDto | null>;
+  findById(orderId: string): Promise<PaymentIdStatusDto | null>;
 }

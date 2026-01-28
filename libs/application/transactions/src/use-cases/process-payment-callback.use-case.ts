@@ -40,9 +40,7 @@ export class ProcessPaymentCallbackUseCase {
     }
 
     // Fetch existing payment from repository
-    const existingPayment = await this.paymentRepository.findByOrderId(
-      dto.order_id
-    );
+    const existingPayment = await this.paymentRepository.findById(dto.order_id);
 
     if (!existingPayment) {
       this.logger.warn(
