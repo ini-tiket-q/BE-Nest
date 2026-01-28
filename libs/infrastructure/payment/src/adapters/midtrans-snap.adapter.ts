@@ -1,7 +1,5 @@
 import { BadRequestException, Injectable, Logger } from "@nestjs/common";
-import { MidtransGenerateRequestDto } from "../dtos/req/midtrans-generate-request.dto";
 import { MidtransResponseDto, PaymentParams } from "../../../../domain/transactions/models";
-import { MidtransGenerateResponseDto } from "../dtos/res/midtrans-generate-response.dto";
 import { IMidtransPaymentPort } from "@tiketq-be/transactions_domain";
 import { lastValueFrom, catchError, throwError, timeout, retry, timer } from 'rxjs';
 import { HttpService } from "@nestjs/axios";
