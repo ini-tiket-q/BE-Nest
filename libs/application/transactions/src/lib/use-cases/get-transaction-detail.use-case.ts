@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { ITransactionRepositoryPort } from '@tiketq-be/transactions_domain';
 import { TransactionNotFoundException } from '../../exception/transaction-not-found-exception';
 
 @Injectable()
 export class GetTransactionDetailUseCase {
-  constructor(private TransactionRepository: ITransactionRepositoryPort) {}
+  constructor(@Inject('ITransactionRepositoryPort') private TransactionRepository: ITransactionRepositoryPort) {}
 
   async execute(transactionId: string) {
     const transaction = await this.TransactionRepository.findById(transactionId);
