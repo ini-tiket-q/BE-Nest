@@ -23,7 +23,7 @@ export class PaymentRepository implements IPaymentRepositoryPort {
   async findByOrderId(orderId: string): Promise<PaymentIdStatusDto | null> {
     const payment = await this.repo.findOne({
       where: { id: orderId },
-      select: ['id', 'status'],
+      select: ['id', 'status', 'amount'],
     });
     return payment || null;
   }

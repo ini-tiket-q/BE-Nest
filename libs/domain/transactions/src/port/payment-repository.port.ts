@@ -3,6 +3,7 @@ import { Payment } from '../entities/payment.entity';
 export interface PaymentIdStatusDto {
   id: string;
   status: string;
+  amount: number;
 }
 
 export interface IPaymentRepositoryPort {
