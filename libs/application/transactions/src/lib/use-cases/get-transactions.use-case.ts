@@ -1,8 +1,10 @@
 import { GetTransactionsResponseDto, ITransactionRepositoryPort, TransactionsDataDto } from "@tiketq-be/transactions_domain";
 import { GetTransactionsQuery } from "./get-transactions.interface";
+import { Inject, Injectable } from "@nestjs/common";
 
+@Injectable()
 export class GetTransactionsUseCase {
-    constructor(private readonly transactionRepository: ITransactionRepositoryPort) {}
+    constructor(@Inject('ITransactionRepositoryPort') private readonly transactionRepository: ITransactionRepositoryPort) {}
 
     async execute(query: GetTransactionsQuery): Promise<GetTransactionsResponseDto> {
         const { userId, page, limit, startDate, endDate, status } = query;
