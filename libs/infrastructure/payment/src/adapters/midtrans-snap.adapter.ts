@@ -26,7 +26,7 @@ export class MidtransSnapAdapter implements IMidtransPaymentPort {
         return generate
     }
 
-    async createTransaction(path: string, params: PaymentParams): Promise<string> {
+    private async createTransaction(path: string, params: PaymentParams): Promise<string> {
         const encodedServerKey = Buffer.from(`${this.serverKey}:`, 'utf8').toString(
             'base64'
         );
@@ -79,7 +79,7 @@ export class MidtransSnapAdapter implements IMidtransPaymentPort {
         this.logger.log('Midtrans request successful');
         return response.data.redirect_url;
     }
-    isRetryableError(status: number | undefined): boolean {
+    private isRetryableError(status: number | undefined): boolean {
         if (!status) return true;
         if (HttpResilienceConfig.nonRetryableStatusCodes.includes(status)) {
             return false;
@@ -89,7 +89,7 @@ export class MidtransSnapAdapter implements IMidtransPaymentPort {
         }
         return status >= 500;
     }
-    calculateBackoffDelay(retryCount: number): number {
+    private calculateBackoffDelay(retryCount: number): number {
         const { initialDelay, maxDelay, exponentialBackoff } =
         HttpResilienceConfig.retry;
         if (!exponentialBackoff) {
