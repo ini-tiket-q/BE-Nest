@@ -1,4 +1,4 @@
-import { PaymentParams } from "../../models";
+import { PaymentParams } from "../../../models";
 
 export interface IMidtransPaymentPort {
   /**
