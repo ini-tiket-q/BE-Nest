@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
 import { PaymentsController } from './payments.controller';
-import { MidtransSnapAdapter, PaymentModule } from '@tiketq-be/payment';
+import { TransactionsModule } from '@tiketq-be/transactions';
 
 @Module({
-  imports: [PaymentModule],
+  imports: [TransactionsModule],
   controllers: [PaymentsController],
   providers: [PaymentsService],
 })

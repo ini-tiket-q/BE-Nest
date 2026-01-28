@@ -1,19 +1,12 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreatePaymentDto } from './dto/req/create-payment.dto';
-import { IMidtransPaymentPort } from '@tiketq-be/transactions_domain';
+import { CheckoutUseCase } from '@tiketq-be/transactions';
 
 @Injectable()
 export class PaymentsService {
-  constructor(@Inject('IMidtransPaymentPort') private readonly midtransSnapAdapter: IMidtransPaymentPort) {}
+  constructor(private readonly checkout: CheckoutUseCase) {}
   async createTransaction(order: CreatePaymentDto): Promise<string> {
-    const param = {
-      transaction_details: {
-        order_id: order.order_id,
-        gross_amount: order.gross_amount
-      }
-    }
-    const generate = await this.midtransSnapAdapter.generateSnapUrl(param)
+    const generate = await this.checkout.execute(order.order_id, order.gross_amount)
     return generate
   }
-
 }
