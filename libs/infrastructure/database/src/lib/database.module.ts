@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TransactionModel } from './models/transaction.model';
 import { TransactionRepository } from './repositories/transaction.repository';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import { TransactionRepository } from './repositories/transaction.repository';
         username: configService.get('DATABASE_USER'),
         password: configService.get('DATABASE_PASSWORD'),
         database: configService.get('DATABASE_NAME'),
-        entities: [__dirname + '/**/*.model{.ts,.js}'],
+        entities: [TransactionModel],
         synchronize: true,
         logging: true,
       }),

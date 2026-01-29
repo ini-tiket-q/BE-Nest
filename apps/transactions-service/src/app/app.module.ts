@@ -5,8 +5,10 @@ import { AppService } from './app.service';
 import { PaymentServiceModule } from './payments/payment-service.module';
 import { PaymentsModule } from '../payments/payments.module';
 import { CacheModule } from '@nestjs/cache-manager';
-import { TransactionsController } from './transactions.controller';
+
 import { TransactionsModule } from '@tiketq-be/transactions';
+import { TransactionsServiceModule } from './transactions-service/transactions-service.module';
+import { DatabaseModule } from '@tiketq-be/database';
 
 @Module({
   imports: [
@@ -16,10 +18,12 @@ import { TransactionsModule } from '@tiketq-be/transactions';
     }),
     CacheModule.register(),
     TransactionsModule,
+    TransactionsServiceModule,
     PaymentServiceModule,
-    PaymentsModule
+    PaymentsModule,
+    DatabaseModule
   ],
-  controllers: [AppController, TransactionsController],
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule { }
