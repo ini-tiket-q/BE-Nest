@@ -23,6 +23,7 @@
       "@tiketq-be/flights": ["libs/application/flights/src/index.ts"],
       "@tiketq-be/database": ["libs/infrastructure/database/src/index.ts"],
       "@tiketq-be/payment": ["libs/infrastructure/payment/src/index.ts"],
+      "@tiketq-be/shared": ["libs/infrastructure/shared/src/index.ts"],
       "@tiketq-be/flight-vendor": [
         "libs/infrastructure/flight-vendor/src/index.ts"
       ],
