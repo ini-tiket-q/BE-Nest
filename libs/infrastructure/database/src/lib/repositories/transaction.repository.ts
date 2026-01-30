@@ -6,9 +6,10 @@ import {
     CustomerInfo, 
     TransactionStatus,
     ITransactionRepositoryPort, 
-    TransactionsQuery,
+    QueryByUserId,
     CountTransactionsQuery,
-    FilterQueryByUserId
+    FilterQuery,
+    QueryByEmail
 } from '@tiketq-be/transactions_domain';
 import { TransactionModel } from '../models/transaction.model';
 
@@ -94,8 +95,32 @@ export class TransactionRepository implements ITransactionRepositoryPort {
         ));
     }
 
-    async findByCustomerEmail(email: string): Promise<Transaction[]> {
-        const models = await this.repo.find({ where: { customerEmail: email } });
+    async findByCustomerEmail(query: QueryByEmail): Promise<Transaction[]> {
+        const skipData: number = (query.page - 1) * query.limit;
+        // for filter query
+        let filterQuery: FilterQuery = { customerEmail: query.email }
+        if(query.status) filterQuery.status = query.status; 
+        if(query.startDate && query.endDate) {
+            filterQuery.createdAt = Between(query.startDate, query.endDate);
+        } else if (query.startDate) {
+            filterQuery.createdAt = MoreThanOrEqual(query.startDate);
+        } else if (query.endDate) {
+            filterQuery.createdAt = LessThanOrEqual(query.endDate);
+        }
+
+        const models = await this.repo.find({
+            where: filterQuery,
+            take: query.limit,
+            skip: skipData,
+            select: {
+                id: true,
+                currency: true,
+                amount: true,
+                status: true,
+                createdAt: true,
+                updatedAt: true
+            }
+        });
         return models.map(model => new Transaction(
             model.id,
             model.userId,
@@ -113,10 +138,10 @@ export class TransactionRepository implements ITransactionRepositoryPort {
         ));
     }
 
-    async findByUserId(query: TransactionsQuery): Promise<Transaction[]> {
-        const skipData: number = (query.page - 1) * query.limit
+    async findByUserId(query: QueryByUserId): Promise<Transaction[]> {
+        const skipData: number = (query.page - 1) * query.limit;
         // for filter query
-        let filterQuery: FilterQueryByUserId = { userId: query.userId }
+        let filterQuery: FilterQuery = { userId: query.userId }
         if(query.status) filterQuery.status = query.status; 
         if(query.startDate && query.endDate) {
             filterQuery.createdAt = Between(query.startDate, query.endDate);
@@ -159,8 +184,11 @@ export class TransactionRepository implements ITransactionRepositoryPort {
 
     async countByUserId(query: CountTransactionsQuery): Promise<number> {
         // for filter query
-        let filterQuery: FilterQueryByUserId = { userId: query.userId }
+        let filterQuery: FilterQuery = {};
+        if(query.userId) filterQuery.userId = query.userId;
+        if(query.email) filterQuery.customerEmail = query.email
         if(query.status) filterQuery.status = query.status; 
+        // for filter query createdAt
         if(query.startDate && query.endDate) {
             filterQuery.createdAt = Between(query.startDate, query.endDate);
         } else if (query.startDate) {
