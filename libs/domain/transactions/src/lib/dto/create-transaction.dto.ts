@@ -21,12 +21,17 @@ export class CreateTransactionDto {
         format: 'uuid',
     })
     @IsUUID('4')
-    @IsOptional()
-    userId?: string;
-
-    @IsUUID('4')
     @IsNotEmpty()
     flightId!: string;
+
+    @ApiProperty({
+        description: 'UUID of the userId',
+        example: '430e8400-a29b-41d4-a716-665544440000',
+        format: 'uuid',
+    })
+    @IsUUID('4')
+    @IsOptional()
+    userId?: string;
 
     @ApiProperty({
         description: 'Array of passenger UUIDs for this booking',
