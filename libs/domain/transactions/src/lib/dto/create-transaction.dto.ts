@@ -56,23 +56,21 @@ export class CreateTransactionDto {
     currency!: string;
 
     @ApiProperty({
-        description: 'Customer full name (required for guest checkout, optional if authenticated)',
+        description: 'Customer full name',
         example: 'John Doe',
-        required: false,
+        required: true,
     })
-    @IsOptional()
     @IsString()
     @IsNotEmpty()
-    customerName?: string;
+    customerName!: string;
 
     @ApiProperty({
-        description: 'Customer email address (required for guest checkout, optional if authenticated)',
+        description: 'Customer email address',
         example: 'john.doe@example.com',
-        required: false,
+        required: true,
     })
-    @IsOptional()
     @IsEmail()
-    customerEmail?: string;
+    customerEmail!: string;
 
     @ApiProperty({
         description: 'Customer phone number (optional)',

@@ -1,23 +1,31 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
-import { Transaction, CustomerInfo, ITransactionRepositoryPort, CreateTransactionDto, CreateTransactionResponseDto } from '@tiketq-be/transactions_domain';
+import {
+  Transaction,
+  CustomerInfo,
+  ITransactionRepositoryPort,
+  CreateTransactionDto,
+  CreateTransactionResponseDto,
+} from '@tiketq-be/transactions_domain';
 
 @Injectable()
 export class CreateTransactionUseCase {
   constructor(
     @Inject('ITransactionRepositoryPort')
-    private readonly transactionRepository: ITransactionRepositoryPort,
+    private readonly transactionRepository: ITransactionRepositoryPort
   ) {}
 
-  async execute(dto: CreateTransactionDto): Promise<CreateTransactionResponseDto> {
+  async execute(
+    dto: CreateTransactionDto
+  ): Promise<CreateTransactionResponseDto> {
     // Generate transaction ID
     const transactionId = uuidv4();
 
-    // Create customer info - use provided data or default to Guest
+    // Create customer info from required DTO fields
     const customerInfo = CustomerInfo.create(
-      dto.customerName || 'Guest',
-      dto.customerEmail || 'guest@example.com',
-      dto.customerPhone,
+      dto.customerName,
+      dto.customerEmail,
+      dto.customerPhone
     );
 
     // Create transaction domain entity
@@ -26,7 +34,7 @@ export class CreateTransactionUseCase {
       dto.amount,
       dto.currency,
       dto.flightId,
-      customerInfo,
+      customerInfo
     );
 
     // Save to database via repository
