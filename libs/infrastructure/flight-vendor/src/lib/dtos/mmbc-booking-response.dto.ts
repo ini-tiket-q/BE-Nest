@@ -2,6 +2,25 @@
 interface MmbcBookingResponseBase {
   result: string;
 }
+// Passenger details in JSON format
+export interface MmbcPassengerJson {
+  passenger_title: string;
+  passenger_fullname: string;
+  passenger_type: string;
+  passenger_baggageintl?: string;
+  passenger_ffnumber?: string;
+  passenger_dob?: string;
+  passenger_passportnumber?: string;
+  passenger_passportexpired?: string;
+}
+
+// Contact details in JSON format
+export interface MmbcContactJson {
+  contact_title: string;
+  contact_fullname: string;
+  contact_email: string;
+  contact_phone: string;
+}
 
 // Success response - all booking fields
 export interface MmbcBookingSuccessResponseDto extends MmbcBookingResponseBase {
