@@ -6,8 +6,8 @@ export class TransactionsDataDto {
     @Type(() => String)
     id!: string;
     
-    // @Type(() => String)
-    // userId?: string;
+    @Type(() => String)
+    userId?: string;
 
     @Type(() => String)
     currency!: string
