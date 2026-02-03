@@ -10,7 +10,7 @@ COPY nx.json ./
 COPY tsconfig.base.json ./
 
 # Install all dependencies
-RUN npm ci
+RUN npm install
 
 # Copy the rest of the monorepo source code
 COPY . .
@@ -28,7 +28,7 @@ FROM node:20-alpine as production-base
 
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm ci --omit=dev
+RUN npm install --omit=dev
 # Copy the environment file from the root of the build context
 COPY .env .
 
