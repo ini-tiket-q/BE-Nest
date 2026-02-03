@@ -18,7 +18,7 @@
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
-import { Resource } from '@opentelemetry/resources';
+import { resourceFromAttributes } from '@opentelemetry/resources';
 import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
 
 /**
@@ -32,13 +32,13 @@ import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions'
  */
 export function initializeTracing(serviceName: string, serviceVersion?: string): void {
   // Check if tracing is already initialized to avoid double initialization
-  if (process.env.OTEL_SDK_DISABLED === 'true') {
+  if (process.env['OTEL_SDK_DISABLED'] === 'true') {
     console.log(`[Tracing] Disabled for ${serviceName}`);
     return;
   }
 
   // Get Jaeger endpoint from environment or use default
-  const jaegerEndpoint = process.env.JAEGER_ENDPOINT || 'http://localhost:4318/v1/traces';
+  const jaegerEndpoint = process.env['JAEGER_ENDPOINT'] || 'http://localhost:4318/v1/traces';
   
   // Create the trace exporter that sends traces to Jaeger
   const traceExporter = new OTLPTraceExporter({
@@ -50,10 +50,10 @@ export function initializeTracing(serviceName: string, serviceVersion?: string):
   // Create the OpenTelemetry SDK
   const sdk = new NodeSDK({
     // Resource attributes help identify your service in Jaeger UI
-    resource: new Resource({
+    resource: resourceFromAttributes({
       [SemanticResourceAttributes.SERVICE_NAME]: serviceName,
       [SemanticResourceAttributes.SERVICE_VERSION]: serviceVersion || '1.0.0',
-      [SemanticResourceAttributes.DEPLOYMENT_ENVIRONMENT]: process.env.NODE_ENV || 'development',
+      [SemanticResourceAttributes.DEPLOYMENT_ENVIRONMENT]: process.env['NODE_ENV'] || 'development',
     }),
     
     // Auto-instrumentations automatically create spans for common operations:
