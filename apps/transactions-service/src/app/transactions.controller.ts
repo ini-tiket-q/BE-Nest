@@ -20,7 +20,7 @@ import { CreateTransactionUseCase } from '@tiketq-be/transactions';
 @ApiTags('transactions')
 @Controller('transactions')
 export class TransactionsController {
-    constructor(private readonly createTransactionUseCase: CreateTransactionUseCase) {}
+    constructor(private readonly createTransactionUseCase: CreateTransactionUseCase) { }
 
     @Post()
     @HttpCode(HttpStatus.CREATED)
@@ -30,11 +30,11 @@ export class TransactionsController {
     })
     @ApiBody({
         type: CreateTransactionDto,
-        description: 'Transaction creation payload. Customer fields are required for guest checkout.',
+        description: 'Transaction creation payload. Customer name and email are required.',
         examples: {
-            guestCheckout: {
-                summary: 'Guest checkout (with customer info)',
-                description: 'Used when user is not authenticated',
+            createTransaction: {
+                summary: 'Create transaction with customer information',
+                description: 'Customer name and email are required fields',
                 value: {
                     flightId: '550e8400-e29b-41d4-a716-446655440000',
                     passengerIds: ['550e8400-e29b-41d4-a716-446655440001'],
@@ -43,19 +43,6 @@ export class TransactionsController {
                     customerName: 'John Doe',
                     customerEmail: 'john.doe@example.com',
                     customerPhone: '+6281234567890',
-                },
-            },
-            authenticatedUser: {
-                summary: 'Authenticated user (without customer info)',
-                description: 'Customer info will be extracted from JWT token',
-                value: {
-                    flightId: '550e8400-e29b-41d4-a716-446655440000',
-                    passengerIds: [
-                        '550e8400-e29b-41d4-a716-446655440001',
-                        '550e8400-e29b-41d4-a716-446655440002',
-                    ],
-                    amount: 3000000,
-                    currency: 'IDR',
                 },
             },
         },

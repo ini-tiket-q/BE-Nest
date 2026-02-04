@@ -3,6 +3,12 @@
  * This is only a minimal backend to get started.
  */
 
+// ⚠️ IMPORTANT:
+// Import tracing BEFORE any NestJS modules so OpenTelemetry can
+// auto-instrument HTTP/Express and other libraries correctly.
+import { TraceIdLoggingInterceptor } from './tracing';
+
+// Now we can safely import NestJS modules
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -12,6 +18,9 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
+
+  // Log the OpenTelemetry trace ID for every incoming request.
+  app.useGlobalInterceptors(new TraceIdLoggingInterceptor());
 
   // Enable global validation pipe
   app.useGlobalPipes(

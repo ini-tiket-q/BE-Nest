@@ -32,9 +32,13 @@ services:
   jaeger:
     image: jaegertracing/all-in-one:latest
     container_name: jaeger
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
     ports:
-      - "16686:16686"
-      - "14268:14268"
+      - "16686:16686"  # Jaeger UI
+      - "14268:14268"  # Jaeger collector HTTP
+      - "4317:4317"    # OTLP gRPC receiver
+      - "4318:4318"    # OTLP HTTP receiver
 
   api-gateway:
     build:
@@ -50,6 +54,8 @@ services:
     environment:
       NODE_ENV: production
       PORT: 3000
+      # Send traces to Jaeger collector (inside the same Docker network)
+      JAEGER_ENDPOINT: http://jaeger:4318/v1/traces
 
   transactions-service:
     build:
@@ -66,6 +72,8 @@ services:
       DATABASE_HOST: postgres
       NODE_ENV: production
       PORT: 3001
+      # Send traces to Jaeger collector (inside the same Docker network)
+      JAEGER_ENDPOINT: http://jaeger:4318/v1/traces
 
   flight-service:
     build:
@@ -82,6 +90,8 @@ services:
       DATABASE_HOST: postgres
       NODE_ENV: production
       PORT: 3002
+      # Send traces to Jaeger collector (inside the same Docker network)
+      JAEGER_ENDPOINT: http://jaeger:4318/v1/traces
 
 volumes:
   postgres_data:
