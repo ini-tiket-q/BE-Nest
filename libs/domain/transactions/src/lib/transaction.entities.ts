@@ -33,8 +33,19 @@ export class Transaction {
         public readonly bookingId: string,
         public readonly customerInfo: CustomerInfo,
         public readonly createdAt: Date,
-        public readonly updatedAt: Date
-    ) {}
+        public readonly updatedAt: Date,
+        // Payment gateway information for debugging
+        public readonly paymentGatewayId?: string,        // Midtrans/Xendit transaction ID
+        public readonly paymentGatewayName?: string,      // e.g., 'midtrans', 'xendit'
+        public readonly paymentStatus?: string,            // Payment gateway specific status
+        // Refund information
+        public readonly refundStatus?: string,             // 'none', 'partial', 'full'
+        public readonly refundAmount?: number,             // Amount refunded
+        // Error tracking
+        public readonly errorMessage?: string,             // Error details if transaction failed
+        // Flexible metadata for additional information
+        public readonly metadata?: Record<string, any>,    // Flight snapshot, additional debugging info
+    ) { }
 
     static create(
         id: string,
@@ -82,7 +93,14 @@ export class Transaction {
             this.bookingId,
             this.customerInfo,
             this.createdAt,
-            new Date()
+            new Date(),
+            this.paymentGatewayId,
+            this.paymentGatewayName,
+            this.paymentStatus,
+            this.refundStatus,
+            this.refundAmount,
+            this.errorMessage,
+            this.metadata
         );
     }
 
@@ -100,7 +118,14 @@ export class Transaction {
             this.bookingId,
             this.customerInfo,
             this.createdAt,
-            new Date()
+            new Date(),
+            this.paymentGatewayId,
+            this.paymentGatewayName,
+            this.paymentStatus,
+            this.refundStatus,
+            this.refundAmount,
+            this.errorMessage,
+            this.metadata
         );
     }
 
@@ -118,7 +143,14 @@ export class Transaction {
             this.bookingId,
             this.customerInfo,
             this.createdAt,
-            new Date()
+            new Date(),
+            this.paymentGatewayId,
+            this.paymentGatewayName,
+            this.paymentStatus,
+            this.refundStatus,
+            this.refundAmount,
+            this.errorMessage,
+            this.metadata
         );
     }
 

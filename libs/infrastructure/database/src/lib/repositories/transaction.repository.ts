@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Between, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
+import { Between, LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
+import { Repository } from 'typeorm';
 import { 
     Transaction, 
     CustomerInfo, 
@@ -9,7 +10,6 @@ import {
     QueryByUserId,
     CountTransactionsQuery,
     FilterQuery,
-    QueryByEmail
 } from '@tiketq-be/transactions_domain';
 import { TransactionModel } from '../models/transaction.model';
 
@@ -95,32 +95,8 @@ export class TransactionRepository implements ITransactionRepositoryPort {
         ));
     }
 
-    async findByCustomerEmail(query: QueryByEmail): Promise<Transaction[]> {
-        const skipData: number = (query.page - 1) * query.limit;
-        // for filter query
-        let filterQuery: FilterQuery = { customerEmail: query.email }
-        if(query.status) filterQuery.status = query.status; 
-        if(query.startDate && query.endDate) {
-            filterQuery.createdAt = Between(query.startDate, query.endDate);
-        } else if (query.startDate) {
-            filterQuery.createdAt = MoreThanOrEqual(query.startDate);
-        } else if (query.endDate) {
-            filterQuery.createdAt = LessThanOrEqual(query.endDate);
-        }
-
-        const models = await this.repo.find({
-            where: filterQuery,
-            take: query.limit,
-            skip: skipData,
-            select: {
-                id: true,
-                currency: true,
-                amount: true,
-                status: true,
-                createdAt: true,
-                updatedAt: true
-            }
-        });
+    async findByCustomerEmail(email: string): Promise<Transaction[]> {
+        const models = await this.repo.find({ where: { customerEmail: email } });
         return models.map(model => new Transaction(
             model.id,
             model.userId,

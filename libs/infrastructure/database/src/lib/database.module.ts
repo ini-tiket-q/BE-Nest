@@ -3,7 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TransactionModel } from './models/transaction.model';
 import { TransactionRepository } from './repositories/transaction.repository';
-import { join } from 'path';
 
 @Module({
   imports: [
