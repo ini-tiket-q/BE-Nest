@@ -1,44 +1,93 @@
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
-  BadRequestException,
   CallHandler,
   ExecutionContext,
-  Inject,
   Injectable,
   NestInterceptor,
+  BadRequestException,
+  ConflictException,
 } from '@nestjs/common';
 import { Cache } from 'cache-manager';
-import { from, Observable, tap } from 'rxjs';
+import { Inject } from '@nestjs/common';
+import { from, Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { hashRequestBody } from '../utils/idempotency.utils';
 
-const IDEMPOTENCY_TTL_SECONDS = 60 * 5;
+export interface IdempotencyCacheValue {
+  bodyHash: string;
+  response: any;
+}
+
+export const IDEMPOTENCY_HEADER = 'idempotency-key';
+export const IDEMPOTENCY_PREFIX = 'idempotency';
+export const IDEMPOTENCY_BODY_PREFIX = 'idempotency:body';
+export const IDEMPOTENCY_TTL = 1000 * 60 * 5; // 5 minutes
+export const IDEMPOTENCY_LOCK_TTL = 1000 * 60; // 60 seconds
 
 @Injectable()
 export class IdempotencyInterceptor implements NestInterceptor {
-  constructor(@Inject(CACHE_MANAGER) private readonly cacheManager: Cache) {}
+  constructor(
+    @Inject('CACHE_MANAGER')
+    private readonly cache: Cache
+  ) {}
 
   async intercept(
     context: ExecutionContext,
     next: CallHandler
-  ): Promise<Observable<unknown>> {
-    const req = context.switchToHttp().getRequest();
-    const key =
-      (req.headers['x-idempotency-key'] as string) ??
-      (req.headers['X-Idempotency-Key'] as string);
+  ): Promise<Observable<any>> {
+    const request = context.switchToHttp().getRequest();
+    const idempotencyKey =
+      (request.headers['x-idempotency-key'] as string) ??
+      (request.headers['X-Idempotency-Key'] as string);
 
-    if (!key) {
+    if (!idempotencyKey) {
       throw new BadRequestException('Idempotency-Key header is required');
     }
 
-    const cacheKey = key;
-    const cached = await this.cacheManager.get(cacheKey);
+    const bodyHash = hashRequestBody(request.body);
+
+    const keyCacheKey = `${IDEMPOTENCY_PREFIX}:${idempotencyKey}`;
+    const bodyCacheKey = `${IDEMPOTENCY_BODY_PREFIX}:${bodyHash}`;
+    const lockKey = `${keyCacheKey}:lock`;
+
+    const existingKeyForBody = await this.cache.get<string>(bodyCacheKey);
+
+    if (existingKeyForBody && existingKeyForBody !== idempotencyKey) {
+      throw new ConflictException(
+        'Same request payload was already processed with a different Idempotency-Key'
+      );
+    }
+
+    const cached = await this.cache.get<IdempotencyCacheValue>(keyCacheKey);
 
     if (cached) {
-      return from([cached]);
+      if (cached.bodyHash !== bodyHash) {
+        throw new ConflictException(
+          'Idempotency-Key already used with different request body'
+        );
+      }
+
+      return from(Promise.resolve(cached.response));
+    }
+
+    const lockExists = await this.cache.get(lockKey);
+    if (lockExists) {
+      throw new ConflictException(
+        'Request with this Idempotency-Key is already being processed'
+      );
     }
 
     return next.handle().pipe(
-      tap((response) => {
-        this.cacheManager.set(cacheKey, response, IDEMPOTENCY_TTL_SECONDS);
+      tap(async (response) => {
+        await this.cache.set(
+          keyCacheKey,
+          {
+            bodyHash,
+            response,
+          },
+          IDEMPOTENCY_TTL
+        );
+
+        await this.cache.set(bodyCacheKey, idempotencyKey, IDEMPOTENCY_TTL);
       })
     );
   }
