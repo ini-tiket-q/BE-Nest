@@ -28,15 +28,8 @@ Microservice development is a project focused on developing a smart booking dash
     ```
     <br>
 2. Generate Midtrans Payment URL  <br>
-    The transaction endpoint returns data stored in the database. Use the transactionId and amount to generate a Midtrans payment URL. <br><br>
-    **POST**: /api/payments/create-transaction <br>
-    Body Json:  
-    ```
-    {
-        "order_id": "550e8400-e29b-41d4-a716-446655440000", // from transactionId
-        "gross_amount": 1500000, // from amount
-    }
-    ```
+    The transaction endpoint returns data stored in the database. Use the transactionId in param to generate a Midtrans payment URL. <br><br>
+    **POST**: /api/payments/:transactionId/payment-url <br>
     Response example:
     ```
     {
