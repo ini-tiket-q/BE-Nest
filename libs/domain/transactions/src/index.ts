@@ -3,3 +3,12 @@ export * from './lib/ports';
 export * from './lib/dto/create-transaction.dto';
 export * from './lib/dto/create-transaction-response.dto';
 export * from "./port/payment.request.port"
+export * from './lib/ports/payment.request.port'
+export * from './lib/transaction.entities';
+export * from './lib/dto/transactions-data.dto';
+export * from './lib/dto/transactions-meta.dto';
+export * from './lib/dto/get-transactions-response.dto';
+export * from './exeption/payment.exeption'
+export * from './entities/payment.entity';
+export * from './port/flight-service.port';
+export * from './port/payment-repository.port';

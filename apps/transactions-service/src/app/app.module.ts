@@ -8,6 +8,12 @@ import { PaymentModule } from '../../../../libs/infrastructure/payment/src/lib/p
 import { PaymentServiceModule } from './payments/payment-service.module';
 import { PaymentsModule } from '../payments/payments.module';
 import { AppThrottlerModule } from '@tiketq-be/shared';
+import { PaymentServiceModule } from './payments/payment-service.module';
+import { CacheModule } from '@nestjs/cache-manager';
+import { TransactionsModule } from '@tiketq-be/transactions';
+import { TransactionsServiceModule } from './transactions/transactions-service.module';
+import { DatabaseModule } from '@tiketq-be/database';
+import { Transaction } from 'typeorm';
 
 @Module({
   imports: [
@@ -17,6 +23,8 @@ import { AppThrottlerModule } from '@tiketq-be/shared';
     }),
     CacheModule.register(),
     TransactionsModule,
+    TransactionsServiceModule,
+    DatabaseModule,
     PaymentModule,
     PaymentServiceModule,
     PaymentsModule,

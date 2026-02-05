@@ -7,22 +7,23 @@ export class CreateTransactionUseCase {
   constructor(
     @Inject('ITransactionRepositoryPort')
     private readonly transactionRepository: ITransactionRepositoryPort,
-  ) { }
+  ) {}
 
   async execute(dto: CreateTransactionDto): Promise<CreateTransactionResponseDto> {
     // Generate transaction ID
     const transactionId = uuidv4();
 
-    // Create customer info from required DTO fields
+    // Create customer info - use provided data or default to Guest
     const customerInfo = CustomerInfo.create(
-      dto.customerName,
-      dto.customerEmail,
+      dto.customerName || 'Guest',
+      dto.customerEmail || 'guest@example.com',
       dto.customerPhone,
     );
 
     // Create transaction domain entity
     const transaction = Transaction.create(
       transactionId,
+      dto.userId,
       dto.amount,
       dto.currency,
       dto.flightId,

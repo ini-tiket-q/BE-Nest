@@ -1,11 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Between, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { 
     Transaction, 
     CustomerInfo, 
     TransactionStatus,
-    ITransactionRepositoryPort 
+    ITransactionRepositoryPort, 
+    QueryByUserId,
+    CountTransactionsQuery,
+    FilterQuery,
+    QueryByEmail
 } from '@tiketq-be/transactions_domain';
 import { TransactionModel } from '../models/transaction.model';
 
@@ -20,6 +24,7 @@ export class TransactionRepository implements ITransactionRepositoryPort {
         // Map: Domain Entity → Database Model
         const model = new TransactionModel();
         model.id = transaction.id;
+        model.userId = transaction.userId;
         model.amount = transaction.amount;
         model.currency = transaction.currency;
         model.status = transaction.status;
@@ -34,6 +39,7 @@ export class TransactionRepository implements ITransactionRepositoryPort {
         // Map: Database Model → Domain Entity
         return new Transaction(
             saved.id,
+            saved.userId,
             saved.amount,
             saved.currency,
             saved.status as TransactionStatus,
@@ -55,6 +61,7 @@ export class TransactionRepository implements ITransactionRepositoryPort {
         // Map: Database Model → Domain Entity
         return new Transaction(
             model.id,
+            model.userId,
             model.amount,
             model.currency,
             model.status as TransactionStatus,
@@ -73,6 +80,7 @@ export class TransactionRepository implements ITransactionRepositoryPort {
         const models = await this.repo.find({ where: { bookingId } });
         return models.map(model => new Transaction(
             model.id,
+            model.userId,
             model.amount,
             model.currency,
             model.status as TransactionStatus,
@@ -87,10 +95,35 @@ export class TransactionRepository implements ITransactionRepositoryPort {
         ));
     }
 
-    async findByCustomerEmail(email: string): Promise<Transaction[]> {
-        const models = await this.repo.find({ where: { customerEmail: email } });
+    async findByCustomerEmail(query: QueryByEmail): Promise<Transaction[]> {
+        const skipData: number = (query.page - 1) * query.limit;
+        // for filter query
+        let filterQuery: FilterQuery = { customerEmail: query.email }
+        if(query.status) filterQuery.status = query.status; 
+        if(query.startDate && query.endDate) {
+            filterQuery.createdAt = Between(query.startDate, query.endDate);
+        } else if (query.startDate) {
+            filterQuery.createdAt = MoreThanOrEqual(query.startDate);
+        } else if (query.endDate) {
+            filterQuery.createdAt = LessThanOrEqual(query.endDate);
+        }
+
+        const models = await this.repo.find({
+            where: filterQuery,
+            take: query.limit,
+            skip: skipData,
+            select: {
+                id: true,
+                currency: true,
+                amount: true,
+                status: true,
+                createdAt: true,
+                updatedAt: true
+            }
+        });
         return models.map(model => new Transaction(
             model.id,
+            model.userId,
             model.amount,
             model.currency,
             model.status as TransactionStatus,
@@ -103,5 +136,70 @@ export class TransactionRepository implements ITransactionRepositoryPort {
             model.createdAt,
             model.updatedAt
         ));
+    }
+
+    async findByUserId(query: QueryByUserId): Promise<Transaction[]> {
+        const skipData: number = (query.page - 1) * query.limit;
+        // for filter query
+        let filterQuery: FilterQuery = { userId: query.userId }
+        if(query.status) filterQuery.status = query.status; 
+        if(query.startDate && query.endDate) {
+            filterQuery.createdAt = Between(query.startDate, query.endDate);
+        } else if (query.startDate) {
+            filterQuery.createdAt = MoreThanOrEqual(query.startDate);
+        } else if (query.endDate) {
+            filterQuery.createdAt = LessThanOrEqual(query.endDate);
+        }
+        
+        const models = await this.repo.find({
+            where: filterQuery,
+            take: query.limit,
+            skip: skipData,
+            select: {
+                id: true,
+                currency: true,
+                amount: true,
+                status: true,
+                createdAt: true,
+                updatedAt: true
+            }
+        });
+
+        return models.map(model => new Transaction(
+            model.id,
+            model.userId,
+            model.amount,
+            model.currency,
+            model.status as TransactionStatus,
+            model.bookingId,
+            new CustomerInfo(
+                model.customerName,
+                model.customerEmail,
+                model.customerPhone || undefined
+            ),
+            model.createdAt,
+            model.updatedAt
+        ));
+    }
+
+    async countByUserId(query: CountTransactionsQuery): Promise<number> {
+        // for filter query
+        let filterQuery: FilterQuery = {};
+        if(query.userId) filterQuery.userId = query.userId;
+        if(query.email) filterQuery.customerEmail = query.email
+        if(query.status) filterQuery.status = query.status; 
+        // for filter query createdAt
+        if(query.startDate && query.endDate) {
+            filterQuery.createdAt = Between(query.startDate, query.endDate);
+        } else if (query.startDate) {
+            filterQuery.createdAt = MoreThanOrEqual(query.startDate);
+        } else if (query.endDate) {
+            filterQuery.createdAt = LessThanOrEqual(query.endDate);
+        }
+
+        const countData: number = await this.repo.count({ 
+            where: filterQuery
+        })
+        return countData
     }
 }

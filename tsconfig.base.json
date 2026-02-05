@@ -24,11 +24,14 @@
       "@tiketq-be/flights": ["libs/application/flights/src/index.ts"],
       "@tiketq-be/database": ["libs/infrastructure/database/src/index.ts"],
       "@tiketq-be/payment": ["libs/infrastructure/payment/src/index.ts"],
+      "@tiketq-be/shared": ["libs/infrastructure/shared/src/index.ts"],
       "@tiketq-be/flight-vendor": [
         "libs/infrastructure/flight-vendor/src/index.ts"
       ],
       "@tiketq-be/common": ["libs/infrastructure/common/src/index.ts"],
-      "@tiketq-be/shared": ["libs/infrastructure/shared/src/index.ts"]
+      "@tiketq-be/transactions_infra": [
+        "libs/infrastructure/transactions/src/index.ts"
+      ]
     }
   },
   "exclude": ["node_modules", "tmp"]
