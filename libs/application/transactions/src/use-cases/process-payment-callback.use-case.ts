@@ -1,6 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { MidtransSignatureService } from '@tiketq-be/payment';
 import {
+  IFlightServicePort,
   IPaymentRepositoryPort,
   Payment,
   PaymentSignatureInvalidException,
@@ -15,7 +16,9 @@ export class ProcessPaymentCallbackUseCase {
   constructor(
     private readonly midtransSignatureService: MidtransSignatureService,
     @Inject('IPaymentRepositoryPort')
-    private readonly paymentRepository: IPaymentRepositoryPort
+    private readonly paymentRepository: IPaymentRepositoryPort,
+    @Inject('IFlightServicePort')
+    private readonly flightServicePort: IFlightServicePort
   ) {}
 
   async execute(dto: MidtransCallbackDto): Promise<{ message: string }> {
@@ -62,6 +65,22 @@ export class ProcessPaymentCallbackUseCase {
     if (dto.status_code === '200') {
       payment.markAsPaid();
       this.logger.log(`Payment marked as PAID: order_id=${dto.order_id}`);
+
+      // Trigger Flight Service (don't let failures break the payment)
+      try {
+        await this.flightServicePort.finalizeBooking({
+          bookingId: existingPayment?.bookingId || '', // Use existing bookingId if available
+          transactionId: payment.id,
+          status: 'PAID',
+          timestamp: new Date().toISOString(),
+        });
+      } catch (error) {
+        this.logger.error(
+          'Failed to notify Flight Service, but payment succeeded',
+          error
+        );
+        // Don't throw - payment is still valid
+      }
     } else if (dto.status_code === '201') {
       payment.markAsPending();
       this.logger.log(`Payment marked as PENDING: order_id=${dto.order_id}`);
