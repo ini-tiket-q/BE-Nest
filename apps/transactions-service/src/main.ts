@@ -4,9 +4,11 @@
  */
 
 import { Logger, ValidationPipe } from '@nestjs/common';
+import { HttpAdapterHost } from '@nestjs/core';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app/app.module';
+import { FilterException } from '@tiketq-be/shared'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -21,6 +23,9 @@ async function bootstrap() {
       transform: true,
     })
   );
+
+  const httpAdapterHost = app.get(HttpAdapterHost);
+  app.useGlobalFilters(new FilterException(httpAdapterHost));
 
   // Swagger configuration
   const config = new DocumentBuilder()

@@ -25,6 +25,15 @@ export class CreateTransactionDto {
     flightId!: string;
 
     @ApiProperty({
+        description: 'UUID of the userId',
+        example: '430e8400-a29b-41d4-a716-665544440000',
+        format: 'uuid',
+    })
+    @IsUUID('4')
+    @IsOptional()
+    userId?: string;
+
+    @ApiProperty({
         description: 'Array of passenger UUIDs for this booking',
         example: [
             '550e8400-e29b-41d4-a716-446655440001',
@@ -56,21 +65,23 @@ export class CreateTransactionDto {
     currency!: string;
 
     @ApiProperty({
-        description: 'Customer full name',
+        description: 'Customer full name (required for guest checkout, optional if authenticated)',
         example: 'John Doe',
-        required: true,
+        required: false,
     })
+    @IsOptional()
     @IsString()
     @IsNotEmpty()
-    customerName!: string;
+    customerName?: string;
 
     @ApiProperty({
-        description: 'Customer email address',
+        description: 'Customer email address (required for guest checkout, optional if authenticated)',
         example: 'john.doe@example.com',
-        required: true,
+        required: false,
     })
+    @IsOptional()
     @IsEmail()
-    customerEmail!: string;
+    customerEmail?: string;
 
     @ApiProperty({
         description: 'Customer phone number (optional)',

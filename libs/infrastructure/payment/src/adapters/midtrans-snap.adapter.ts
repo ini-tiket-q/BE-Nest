@@ -1,7 +1,5 @@
 import { BadRequestException, Injectable, Logger } from "@nestjs/common";
-import { MidtransGenerateRequestDto } from "../dtos/req/midtrans-generate-request.dto";
-import { PaymentParams } from "../../../../domain/transactions/models";
-import { MidtransGenerateResponseDto } from "../dtos/res/midtrans-generate-response.dto";
+import { MidtransResponseDto, PaymentParams } from "../../../../domain/transactions/models";
 import { IMidtransPaymentPort } from "@tiketq-be/transactions_domain";
 import { lastValueFrom, catchError, throwError, timeout, retry, timer } from 'rxjs';
 import { HttpService } from "@nestjs/axios";
@@ -19,23 +17,23 @@ export class MidtransSnapAdapter implements IMidtransPaymentPort {
         if (!this.serverKey) throw new BadRequestException('SERVER_KEY is undefined');
     }
 
-    async generateSnapUrl (params: PaymentParams): Promise<MidtransGenerateResponseDto> {
-        const transaction: MidtransGenerateRequestDto = params
+    async generateSnapUrl (params: PaymentParams): Promise<string> {
+        const transaction: PaymentParams = params
         const path = `https://app.sandbox.midtrans.com/snap/v1/transactions`
-        const generate: MidtransGenerateResponseDto = await this.createTransaction<MidtransGenerateResponseDto, MidtransGenerateRequestDto>(path, transaction);
+        const generate: string = await this.createTransaction(path, transaction);
         return generate
     }
 
-    async createTransaction<T, U>(path: string, params: U): Promise<T> {
+    private async createTransaction(path: string, params: PaymentParams): Promise<string> {
         const encodedServerKey = Buffer.from(`${this.serverKey}:`, 'utf8').toString(
             'base64'
         );
 
         this.logger.log(`Sending request to Midtrans: ${path}`);
 
-        const response = await lastValueFrom(
+        const response: { status: number, statusText: string, data: MidtransResponseDto } = await lastValueFrom(
             this.httpService
-            .post<T>(path, params, {
+            .post<MidtransResponseDto>(path, params, {
                 headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json',
@@ -77,9 +75,9 @@ export class MidtransSnapAdapter implements IMidtransPaymentPort {
             )
         );
         this.logger.log('Midtrans request successful');
-        return response.data;
+        return response.data.redirect_url;
     }
-    isRetryableError(status: number | undefined): boolean {
+    private isRetryableError(status: number | undefined): boolean {
         if (!status) return true;
         if (HttpResilienceConfig.nonRetryableStatusCodes.includes(status)) {
             return false;
@@ -89,7 +87,7 @@ export class MidtransSnapAdapter implements IMidtransPaymentPort {
         }
         return status >= 500;
     }
-    calculateBackoffDelay(retryCount: number): number {
+    private calculateBackoffDelay(retryCount: number): number {
         const { initialDelay, maxDelay, exponentialBackoff } =
         HttpResilienceConfig.retry;
         if (!exponentialBackoff) {

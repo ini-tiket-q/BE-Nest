@@ -16,7 +16,7 @@ import { TransactionRepository } from './repositories/transaction.repository';
         username: configService.get('DATABASE_USER'),
         password: configService.get('DATABASE_PASSWORD'),
         database: configService.get('DATABASE_NAME'),
-        entities: [__dirname + '/**/*.model{.ts,.js}'],
+        entities: [TransactionModel],
         synchronize: true,
         logging: true,
       }),
