@@ -6,7 +6,6 @@ import { AppService } from './app.service';
 import { TransactionsController } from './transactions.controller';
 import { TransactionsModule } from '@tiketq-be/transactions';
 import { PaymentServiceModule } from './payments/payment-service.module';
-import { PaymentsModule } from '../payments/payments.module';
 import { AppThrottlerModule } from '@tiketq-be/shared';
 import { TransactionsInfraModule } from '@tiketq-be/transactions_infra';
 
@@ -19,7 +18,6 @@ import { TransactionsInfraModule } from '@tiketq-be/transactions_infra';
     CacheModule.register(),
     TransactionsModule,
     PaymentServiceModule,
-    PaymentsModule,
     AppThrottlerModule,
     TransactionsInfraModule,
   ],

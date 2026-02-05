@@ -3,7 +3,9 @@ import { MidtransSignatureService } from '@tiketq-be/payment';
 import {
   IFlightServicePort,
   IPaymentRepositoryPort,
+  ITransactionRepositoryPort,
   Payment,
+  PaymentNotFoundException,
   PaymentSignatureInvalidException,
   PaymentStatus,
 } from '@tiketq-be/transactions_domain';
@@ -18,7 +20,9 @@ export class ProcessPaymentCallbackUseCase {
     @Inject('IPaymentRepositoryPort')
     private readonly paymentRepository: IPaymentRepositoryPort,
     @Inject('IFlightServicePort')
-    private readonly flightServicePort: IFlightServicePort
+    private readonly flightServicePort: IFlightServicePort,
+    @Inject('ITransactionRepositoryPort')
+    private readonly transactionRepository: ITransactionRepositoryPort
   ) {}
 
   async execute(dto: MidtransCallbackDto): Promise<{ message: string }> {
@@ -43,23 +47,15 @@ export class ProcessPaymentCallbackUseCase {
     }
 
     // Fetch existing payment from repository
-    const existingPayment = await this.paymentRepository.findById(dto.order_id);
+    const trx = await this.transactionRepository.findById(dto.order_id);
 
-    if (!existingPayment) {
-      this.logger.warn(
-        `Payment not found for order_id ${dto.order_id}, creating new payment`
-      );
+    if (!trx) {
+      this.logger.error(`Transaction not found for order_id ${dto.order_id}`);
+      throw new PaymentNotFoundException(`Transaction not found for order_id ${dto.order_id}`);
     }
 
     // Create payment entity - use existing or create new
-    const payment = new Payment(
-      dto.order_id,
-      (existingPayment?.status as PaymentStatus) || PaymentStatus.PENDING
-    );
-
-    this.logger.log(
-      `Payment entity created: order_id=${payment.id}, initial_status=${payment.status}`
-    );
+    const payment = new Payment(trx.id, trx.status as unknown as PaymentStatus);
 
     // Map Midtrans status code to payment status transition
     if (dto.status_code === '200') {
@@ -69,8 +65,8 @@ export class ProcessPaymentCallbackUseCase {
       // Trigger Flight Service (don't let failures break the payment)
       try {
         await this.flightServicePort.finalizeBooking({
-          bookingId: existingPayment?.bookingId || '', // Use existing bookingId if available
-          transactionId: payment.id,
+          bookingId: trx.bookingId,
+          transactionId: trx.id,
           status: 'PAID',
           timestamp: new Date().toISOString(),
         });

@@ -15,11 +15,4 @@ export interface IPaymentRepositoryPort {
    * @param payment The payment entity to save
    */
   save(payment: Payment): Promise<void>;
-
-  /**
-   * Find a payment by order ID
-   * @param orderId The order ID to search for
-   * @returns Payment with only id and status, or null if not found
-   */
-  findById(orderId: string): Promise<PaymentDetailsDto | null>;
 }

@@ -5,6 +5,7 @@ import { CreateTransactionUseCase } from './use-cases/create-transaction.use-cas
 import { ProcessPaymentCallbackUseCase } from '../use-cases/process-payment-callback.use-case';
 import { TransactionsInfraModule } from '@tiketq-be/transactions_infra';
 import { GetPaymentUrlUseCase } from '../use-cases/get-payment-url.use-case';
+import { GetPaymentStatusUseCase } from '../use-cases/get-payment-status.use-case';
 
 @Module({
   imports: [DatabaseModule, PaymentModule, TransactionsInfraModule],
@@ -13,11 +14,13 @@ import { GetPaymentUrlUseCase } from '../use-cases/get-payment-url.use-case';
     CreateTransactionUseCase,
     ProcessPaymentCallbackUseCase,
     GetPaymentUrlUseCase,
+    GetPaymentStatusUseCase,
   ],
   exports: [
     CreateTransactionUseCase,
     ProcessPaymentCallbackUseCase,
     GetPaymentUrlUseCase,
+    GetPaymentStatusUseCase,
   ],
 })
 export class TransactionsModule {}

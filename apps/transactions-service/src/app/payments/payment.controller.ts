@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import {
   ApiHeader,
   ApiOperation,
@@ -6,29 +6,24 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { GetPaymentStatusUseCase, GetPaymentUrlUseCase } from '@tiketq-be/transactions';
-import { CreatePaymentDto } from './dto/req/create-payment.dto';
-import { PaymentsService } from './payments.service';
+import {
+  GetPaymentStatusUseCase,
+  GetPaymentUrlUseCase,
+} from '@tiketq-be/transactions';
 
 @Controller('payments')
 @ApiTags('payments')
-export class PaymentsController {
+export class PaymentController {
   constructor(
-    private readonly paymentsService: PaymentsService,
     private readonly getPaymentUrlUseCase: GetPaymentUrlUseCase,
     private readonly getPaymentStatusUseCase: GetPaymentStatusUseCase
   ) {}
-  @Post('create-transaction')
-  async transaction(
-    @Body() order: CreatePaymentDto
-  ): Promise<{ token: string; redirect_url: string }> {
-    const transaction = await this.paymentsService.createTransaction(order);
-    return transaction;
-  }
-@Get(':transactionId/payment-url')
+
+  @Get(':transactionId/payment-url')
   @ApiOperation({
     summary: 'Get Midtrans payment URL',
-    description: 'Returns the Midtrans Snap URL for the user to complete payment',
+    description:
+      'Returns the Midtrans Snap URL for the user to complete payment',
   })
   @ApiResponse({
     status: 200,

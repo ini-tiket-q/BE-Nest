@@ -1,27 +1,28 @@
 import { Inject, Injectable } from '@nestjs/common';
 import {
-  IPaymentRepositoryPort,
-  PaymentNotFoundException,
+  ITransactionRepositoryPort,
+  PaymentNotFoundException
 } from '@tiketq-be/transactions_domain';
 @Injectable()
 export class GetPaymentStatusUseCase {
   constructor(
-    @Inject('IPaymentRepositoryPort')
-    private readonly paymentRepository: IPaymentRepositoryPort
+    @Inject('ITransactionRepositoryPort')
+    private readonly transactionRepository: ITransactionRepositoryPort
   ) {}
 
   async execute(transactionId: string) {
-    const payment = await this.paymentRepository.findById(transactionId);
-    if (!payment) {
+    // const payment = await this.paymentRepository.findById(transactionId);
+    const trx = await this.transactionRepository.findById(transactionId);
+    if (!trx) {
       throw new PaymentNotFoundException(transactionId);
     }
     return {
-      transactionId: payment.id,
-      status: payment.status,
-      amount: payment.amount,
-      bookingId: payment.bookingId,
-      createdAt: payment.createdAt,
-      updatedAt: payment.updatedAt,
+      transactionId: trx.id,
+      status: trx.status,
+      amount: trx.amount,
+      bookingId: trx.bookingId,
+      createdAt: trx.createdAt,
+      updatedAt: trx.updatedAt,
     };
   }
 }
