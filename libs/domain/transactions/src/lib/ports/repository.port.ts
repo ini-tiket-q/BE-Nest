@@ -70,6 +70,3 @@ interface OptionalFilter {
     createdAt?: FindOperator<Date>;
     status?: TransactionStatus
 }
-
-    
-

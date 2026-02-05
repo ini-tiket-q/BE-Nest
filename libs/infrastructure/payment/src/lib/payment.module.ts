@@ -5,6 +5,7 @@ import { MidtransSignatureService } from '../security/midtrans-signature.service
 
 @Module({
   imports: [HttpModule],
+  imports: [HttpModule],
   controllers: [],
   providers: [
     { provide: 'IMidtransPaymentPort', useClass: MidtransSnapAdapter },
