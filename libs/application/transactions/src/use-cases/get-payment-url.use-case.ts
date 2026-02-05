@@ -34,6 +34,6 @@ export class GetPaymentUrlUseCase {
       },
     });
 
-    return paymentUrl.redirect_url;
+    return paymentUrl;
   }
 }
