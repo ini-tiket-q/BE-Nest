@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TransactionModel } from './models/transaction.model';
 import { TransactionRepository } from './repositories/transaction.repository';
 import { join } from 'path';
+import { PaymentRepository } from './repositories/payment.repository';
 
 @Module({
   imports: [
@@ -29,10 +30,15 @@ import { join } from 'path';
       provide: 'ITransactionRepositoryPort',
       useClass: TransactionRepository,
     },
+    {
+      provide: 'IPaymentRepositoryPort',
+      useClass: PaymentRepository,
+    },
   ],
   exports: [
     TypeOrmModule,
     'ITransactionRepositoryPort',
+    'IPaymentRepositoryPort',
   ],
 })
 export class DatabaseModule {}
