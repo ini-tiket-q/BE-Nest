@@ -31,6 +31,7 @@ export class InternalBookingController {
   @ApiResponse({ status: 400, description: 'Invalid request data' })
   @ApiHeader({ name: 'X-Correlation-ID', required: false })
   async finalizeBooking(@Body() dto: FinalizeBookingDto) {
-    return this.finalizeBookingUseCase.execute(dto);
+    // return this.finalizeBookingUseCase.execute(dto);
+    return null;
   }
 }
