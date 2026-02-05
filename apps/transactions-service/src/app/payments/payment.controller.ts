@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import {
   ApiHeader,
   ApiOperation,
@@ -6,12 +6,14 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { InternalApiGuard } from '@tiketq-be/shared';
 import {
   GetPaymentStatusUseCase,
   GetPaymentUrlUseCase,
 } from '@tiketq-be/transactions';
 
 @Controller('payments')
+@UseGuards(InternalApiGuard)
 @ApiTags('payments')
 export class PaymentController {
   constructor(
