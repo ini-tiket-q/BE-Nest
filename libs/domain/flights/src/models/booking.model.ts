@@ -53,12 +53,9 @@ export interface Booking {
   timeLimit: string;
   bookedBy: string;
   bookedByAgentCode: string;
+  flight: BookingFlightInfo;
   issuedDate?: string;
   ticketNumber?: string;
   issuedBy?: string;
   issuedByAgentCode?: string;
-}
-
-export interface BookingWithDetails extends Booking {
-  flight: BookingFlightInfo;
 }

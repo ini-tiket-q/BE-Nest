@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import {
   IBookingVendorPort,
   Booking,
-  BookingWithDetails,
   BookingPassenger,
   BookingContact,
   BookingPricing,
@@ -35,21 +34,6 @@ export class MmbcBookingAdapter implements IBookingVendorPort {
     return this.mapToBooking(response);
   }
 
-  async getBookingStatusWithDetails(
-    bookingCode: string
-  ): Promise<BookingWithDetails | null> {
-    const response = await this.mmbcService.getBookingStatus(bookingCode);
-
-    if (response.result === 'no') {
-      this.logger.warn(
-        `Booking not found: ${bookingCode} - ${response.reason}`
-      );
-      return null;
-    }
-
-    return this.mapToBookingWithDetails(response);
-  }
-
   private mapToBooking(response: MmbcBookingSuccessResponseDto): Booking {
     return {
       bookingCode: response.kodebooking,
@@ -57,6 +41,7 @@ export class MmbcBookingAdapter implements IBookingVendorPort {
       bookingDate: response.tanggal,
       status: this.mapStatus(response.flight_statusbooking),
       totalPassengers: parseInt(response.flight_totalpassenger, 10) || 0,
+      flight: this.mapFlightInfo(response),
       passengers: this.parsePassengers(response.flight_datapassengers_json),
       contact: this.parseContact(response.flight_contactdetails_json),
       pricing: this.mapPricing(response),
@@ -67,18 +52,6 @@ export class MmbcBookingAdapter implements IBookingVendorPort {
       ticketNumber: response.flight_issued_ticketnumber || undefined,
       issuedBy: response.flight_issuedby || undefined,
       issuedByAgentCode: response.flight_issuedby_kodeagen || undefined,
-    };
-  }
-
-  private mapToBookingWithDetails(
-    response: MmbcBookingSuccessResponseDto
-  ): BookingWithDetails {
-    const booking = this.mapToBooking(response);
-    const flight = this.mapFlightInfo(response);
-
-    return {
-      ...booking,
-      flight,
     };
   }
 
