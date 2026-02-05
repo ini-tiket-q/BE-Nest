@@ -3,6 +3,7 @@ export enum TransactionStatus {
     PENDING = 'PENDING',
     PAID = 'PAID',
     FAILED = 'FAILED',
+    CANCELLED = 'CANCELLED',
 }
 
 export class CustomerInfo {
@@ -115,6 +116,28 @@ export class Transaction {
             new Date()
         );
     }
+
+    cancel(): Transaction {
+        if (this.status === TransactionStatus.PAID) {
+            throw new Error('Paid transactions cannot be cancelled');
+        }
+    
+        if (this.status === TransactionStatus.CANCELLED) {
+            throw new Error('Transaction is already cancelled');
+        }
+    
+        return new Transaction(
+            this.id,
+            this.amount,
+            this.currency,
+            TransactionStatus.CANCELLED,
+            this.bookingId,
+            this.customerInfo,
+            this.createdAt,
+            new Date()
+        );
+    }
+    
 
     isPending(): boolean {
         return this.status === TransactionStatus.PENDING;
