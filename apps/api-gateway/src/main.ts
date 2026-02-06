@@ -17,6 +17,10 @@ async function bootstrap() {
       route: '/api/transactions',
       target: 'http://transactions-service:3001',
     },
+    {
+      route: '/api/docs',
+      target: 'http://transactions-service:3001',
+    },
   ];
 
   // Apply proxy middleware
