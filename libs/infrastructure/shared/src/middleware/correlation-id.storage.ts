@@ -5,3 +5,7 @@ export interface CorrelationIdStore {
 }
 
 export const correlationIdStorage = new AsyncLocalStorage<CorrelationIdStore>();
+
+export function getCorrelationId(): string | undefined {
+  return correlationIdStorage.getStore()?.correlationId;
+}
