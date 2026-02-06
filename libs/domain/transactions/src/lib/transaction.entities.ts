@@ -10,7 +10,7 @@ export class CustomerInfo {
         public readonly name: string,
         public readonly email: string,
         public readonly phone?: string
-    ) {}
+    ) { }
 
     static create(name: string, email: string, phone?: string): CustomerInfo {
         if (!name || name.trim().length === 0) {
@@ -26,19 +26,28 @@ export class CustomerInfo {
 export class Transaction {
     constructor(
         public readonly id: string,
-        public readonly userId: string | undefined,
         public readonly amount: number,
         public readonly currency: string,
         public readonly status: TransactionStatus,
         public readonly bookingId: string,
         public readonly customerInfo: CustomerInfo,
         public readonly createdAt: Date,
-        public readonly updatedAt: Date
-    ) {}
+        public readonly updatedAt: Date,
+        // Payment gateway information for debugging
+        public readonly paymentGatewayId?: string,        // Midtrans/Xendit transaction ID
+        public readonly paymentGatewayName?: string,      // e.g., 'midtrans', 'xendit'
+        public readonly paymentStatus?: string,            // Payment gateway specific status
+        // Refund information
+        public readonly refundStatus?: string,             // 'none', 'partial', 'full'
+        public readonly refundAmount?: number,             // Amount refunded
+        // Error tracking
+        public readonly errorMessage?: string,             // Error details if transaction failed
+        // Flexible metadata for additional information
+        public readonly metadata?: Record<string, any>,    // Flight snapshot, additional debugging info
+    ) { }
 
     static create(
         id: string,
-        userId: string | undefined,
         amount: number,
         currency: string,
         bookingId: string,
@@ -57,7 +66,6 @@ export class Transaction {
         const now = new Date();
         return new Transaction(
             id,
-            userId,
             amount,
             currency.toUpperCase().trim(),
             TransactionStatus.CREATED,
@@ -75,14 +83,20 @@ export class Transaction {
 
         return new Transaction(
             this.id,
-            this.userId,
             this.amount,
             this.currency,
             TransactionStatus.PENDING,
             this.bookingId,
             this.customerInfo,
             this.createdAt,
-            new Date()
+            new Date(),
+            this.paymentGatewayId,
+            this.paymentGatewayName,
+            this.paymentStatus,
+            this.refundStatus,
+            this.refundAmount,
+            this.errorMessage,
+            this.metadata
         );
     }
 
@@ -93,14 +107,20 @@ export class Transaction {
 
         return new Transaction(
             this.id,
-            this.userId,
             this.amount,
             this.currency,
             TransactionStatus.PAID,
             this.bookingId,
             this.customerInfo,
             this.createdAt,
-            new Date()
+            new Date(),
+            this.paymentGatewayId,
+            this.paymentGatewayName,
+            this.paymentStatus,
+            this.refundStatus,
+            this.refundAmount,
+            this.errorMessage,
+            this.metadata
         );
     }
 
@@ -111,14 +131,20 @@ export class Transaction {
 
         return new Transaction(
             this.id,
-            this.userId,
             this.amount,
             this.currency,
             TransactionStatus.FAILED,
             this.bookingId,
             this.customerInfo,
             this.createdAt,
-            new Date()
+            new Date(),
+            this.paymentGatewayId,
+            this.paymentGatewayName,
+            this.paymentStatus,
+            this.refundStatus,
+            this.refundAmount,
+            this.errorMessage,
+            this.metadata
         );
     }
 
