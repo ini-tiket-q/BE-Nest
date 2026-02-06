@@ -7,6 +7,8 @@ import { HttpModule } from '@nestjs/axios';
 import { mmbcHttpConfig } from './config/mmbc-http.config';
 import { MmbcAuthInterceptor } from './interceptors/mmbc-auth.interceptor';
 import { MmbcService } from './services/mmbc.service';
+import { RedisCacheService } from './cache/redis-cache.service';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -21,9 +23,10 @@ import { MmbcService } from './services/mmbc.service';
     BullModule.registerQueue({
       name: 'flight-issuance',
     }),
+    ScheduleModule.forRoot()
   ],
-  providers: [MmbcAuthInterceptor, IssueTicketProcessor, MmbcService],
+  providers: [MmbcAuthInterceptor, IssueTicketProcessor, MmbcService, RedisCacheService],
   controllers: [FlightInternalController],
-  exports: [MmbcService],
+  exports: [MmbcService, RedisCacheService],
 })
 export class FlightInfrastructureModule {}
