@@ -1,3 +1,5 @@
+import './tracing';
+
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
 import { createProxyMiddleware } from 'http-proxy-middleware';
