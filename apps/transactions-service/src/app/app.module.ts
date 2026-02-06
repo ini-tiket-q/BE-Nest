@@ -6,14 +6,9 @@ import { AppService } from './app.service';
 import { TransactionsModule } from '@tiketq-be/transactions';
 import { PaymentModule } from '../../../../libs/infrastructure/payment/src/lib/payment.module';
 import { PaymentServiceModule } from './payments/payment-service.module';
-import { PaymentsModule } from '../payments/payments.module';
-import { AppThrottlerModule } from '@tiketq-be/shared';
-import { PaymentServiceModule } from './payments/payment-service.module';
-import { CacheModule } from '@nestjs/cache-manager';
-import { TransactionsModule } from '@tiketq-be/transactions';
 import { TransactionsServiceModule } from './transactions/transactions-service.module';
 import { DatabaseModule } from '@tiketq-be/database';
-import { Transaction } from 'typeorm';
+import { AppThrottlerModule } from '@tiketq-be/shared';
 
 @Module({
   imports: [
@@ -24,10 +19,10 @@ import { Transaction } from 'typeorm';
     CacheModule.register(),
     TransactionsModule,
     TransactionsServiceModule,
+    PaymentServiceModule,
     DatabaseModule,
     PaymentModule,
     PaymentServiceModule,
-    PaymentsModule,
     AppThrottlerModule,
   ],
   controllers: [AppController],

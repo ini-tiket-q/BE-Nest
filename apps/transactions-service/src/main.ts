@@ -11,8 +11,8 @@ import { FilterException } from '@tiketq-be/shared'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  // const globalPrefix = 'api';
-  // app.setGlobalPrefix(globalPrefix);
+  const globalPrefix = 'api';
+  app.setGlobalPrefix(globalPrefix);
 
   // Enable global validation pipe
   app.useGlobalPipes(
@@ -35,13 +35,14 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('docs', app, document);
+  SwaggerModule.setup('api/docs', app, document);
 
   const port = process.env.PORT || 3000;
   await app.listen(port);
   Logger.log(
-    `🚀 Application is running on: http://localhost:${port}/transactions`
+    `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`
   );
+  Logger.log(`📚 Swagger UI available at: http://localhost:${port}/api/docs`);
 }
 
 bootstrap();

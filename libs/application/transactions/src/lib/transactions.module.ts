@@ -3,30 +3,12 @@ import { DatabaseModule } from '@tiketq-be/database';
 import { CreateTransactionUseCase } from './use-cases/create-transaction.use-case';
 import { GetTransactionDetailUseCase } from './use-cases/get-transaction-detail.use-case';
 import { GetTransactionsUseCase } from './use-cases/get-transactions.use-case';
-import { PaymentModule } from '@tiketq-be/payment';
-import { ProcessPaymentCallbackUseCase } from '../use-cases/process-payment-callback.use-case';
-import { GetPaymentStatusUseCase } from '../use-cases/get-payment-status.use-case';
-import { GetPaymentUrlUseCase } from '../use-cases/get-payment-url.use-case';
-import { TransactionsInfraModule } from '@tiketq-be/transactions_infra';
+import { PaymentModule } from '@tiketq-be/payment'
 
 @Module({
-  imports: [DatabaseModule, PaymentModule, TransactionsInfraModule],
+  imports: [DatabaseModule, PaymentModule],
   controllers: [],
-  providers: [
-    CreateTransactionUseCase,
-    GetTransactionsUseCase,
-    GetTransactionDetailUseCase,
-    ProcessPaymentCallbackUseCase,
-    GetPaymentStatusUseCase,
-    GetPaymentUrlUseCase,
-  ],
-  exports: [
-    CreateTransactionUseCase,
-    GetTransactionsUseCase,
-    GetTransactionDetailUseCase,
-    ProcessPaymentCallbackUseCase,
-    GetPaymentStatusUseCase,
-    GetPaymentUrlUseCase,
-  ],
+  providers: [CreateTransactionUseCase, GetTransactionsUseCase, GetTransactionDetailUseCase],
+  exports: [CreateTransactionUseCase, GetTransactionsUseCase, GetTransactionDetailUseCase],
 })
 export class TransactionsModule {}

@@ -1,6 +1,7 @@
 import { TransactionsDataDto } from '../dto/transactions-data.dto';
-import { Transaction, TransactionStatus } from '../transaction.entities';
+import { TransactionStatus } from '../transaction.entities';
 import { FindOperator } from 'typeorm';
+import { Transaction } from '../transaction.entities';
 
 /**
  * Repository Port - defines contract for transaction persistence
@@ -34,7 +35,7 @@ export interface ITransactionRepositoryPort {
      * @param email - Customer email address
      * @returns Array of transactions for the customer
      */
-    findByCustomerEmail(query: QueryByEmail): Promise<Transaction[]>;
+    findByCustomerEmail(email: string): Promise<Transaction[]>;
 
     findByUserId(query: QueryByUserId): Promise<TransactionsDataDto[]>
 
@@ -43,10 +44,6 @@ export interface ITransactionRepositoryPort {
 
 export interface QueryByUserId extends OptionalQueryUseCase, Paganation {
     userId: string;
-}
-
-export interface QueryByEmail extends OptionalQueryUseCase, Paganation {
-    email: string;
 }
 
 export interface CountTransactionsQuery extends OptionalQueryUseCase {
@@ -73,4 +70,6 @@ interface OptionalFilter {
     createdAt?: FindOperator<Date>;
     status?: TransactionStatus
 }
+
+    
 
