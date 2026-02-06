@@ -10,7 +10,7 @@ export class CustomerInfo {
         public readonly name: string,
         public readonly email: string,
         public readonly phone?: string
-    ) {}
+    ) { }
 
     static create(name: string, email: string, phone?: string): CustomerInfo {
         if (!name || name.trim().length === 0) {

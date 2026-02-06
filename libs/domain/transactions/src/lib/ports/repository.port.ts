@@ -60,6 +60,7 @@ interface Paganation {
     page: number;
     limit: number;
 }
+
 interface OptionalQueryUseCase {
     startDate?: Date;
     endDate?: Date;
