@@ -4,6 +4,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import { Logger } from '@nestjs/common';
+import { LoggingInterceptor } from '@tiketq-be/shared';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -34,6 +35,8 @@ async function bootstrap() {
       })
     );
   });
+
+  app.useGlobalInterceptors(new LoggingInterceptor());
 
   await app.listen(port);
   Logger.log(`🚀 API Gateway is running on: http://localhost:${port}`);
