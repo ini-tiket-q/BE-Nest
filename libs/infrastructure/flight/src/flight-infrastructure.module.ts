@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bullmq';
-import {IssueTicketProcessor} from './processors/issue-ticket.processor';
+import { IssueTicketProcessor } from './jobs/issue-ticket.processor';
 import { FlightInternalController } from './controllers/flight-internal.controller';
 
 @Module({
@@ -18,4 +18,4 @@ import { FlightInternalController } from './controllers/flight-internal.controll
     providers: [IssueTicketProcessor],
     controllers: [FlightInternalController],
 })
-export class FlightInfrastructureModule {}
+export class FlightInfrastructureModule { }
